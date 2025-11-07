@@ -14,8 +14,8 @@ import * as dto from './dto';
 import { EmailService } from '../common/services/email.service';
 
 @Injectable()
-export class AuthApiService {
-  private readonly logger = new Logger(AuthApiService.name);
+export class AuthRestApiService {
+  private readonly logger = new Logger(AuthRestApiService.name);
   private readonly emailService: EmailService;
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,

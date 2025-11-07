@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { User, VerifyEmailToken, ResetPasswordToken } from '../common/entities';
-import { AuthApiService } from './auth-api.service';
-import { AuthApiController } from './auth-api.controller';
+import { AuthRestApiService } from './auth-rest-api.service';
+import { AuthRestApiController } from './auth-rest-api.controller';
 
 @Module({
   imports: [
@@ -18,8 +18,8 @@ import { AuthApiController } from './auth-api.controller';
       }),
     }),
   ],
-  providers: [AuthApiService],
-  controllers: [AuthApiController],
+  providers: [AuthRestApiService],
+  controllers: [AuthRestApiController],
   exports: [JwtModule],
 })
-export class AuthApiModule {}
+export class AuthRestApiModule {}

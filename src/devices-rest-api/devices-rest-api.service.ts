@@ -6,8 +6,8 @@ import * as dto from './dto';
 import { Device, WidgetBox, DeviceData, NotificationEvent } from '../common/entities';
 
 @Injectable()
-export class DevicesApiService {
-  private readonly logger = new Logger(DevicesApiService.name);
+export class DevicesRestApiService {
+  private readonly logger = new Logger(DevicesRestApiService.name);
   constructor(
     @InjectRepository(Device) private readonly deviceRepository: Repository<Device>,
     @InjectRepository(WidgetBox) private readonly widgetBoxRepository: Repository<WidgetBox>,

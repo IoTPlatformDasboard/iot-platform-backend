@@ -1,7 +1,7 @@
 import { Controller, Logger, UseGuards, Req, Body, Post, Get, Patch, Delete, Query, Put, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiBearerAuth, ApiTags, ApiParam } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { DevicesApiService } from './devices-api.service';
+import { DevicesRestApiService } from './devices-rest-api.service';
 import * as dto from './dto';
 import AuthenticatedRequest from '../common/interfaces/authenticated-request.interface';
 import { OrganizationMemberRolesGuard } from '../common/guards/organization-member-roles.guard';
@@ -13,10 +13,10 @@ import { OrganizationMemberRole } from '../common/entities';
 @ApiParam({ name: 'organizationId', type: String, description: 'Organization id' })
 @UseInterceptors(CacheInterceptor)
 @Controller('organizations/:organizationId/devices')
-export class DevicesApiController {
-  private readonly logger = new Logger(DevicesApiController.name);
+export class DevicesRestApiController {
+  private readonly logger = new Logger(DevicesRestApiController.name);
   constructor(
-    private readonly devicesApiService: DevicesApiService
+    private readonly devicesRestApiService: DevicesRestApiService
   ) { }
 
   @ApiOperation({ summary: 'Create a new device (organization operator minimal role)' })
@@ -39,7 +39,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async post(@Req() request: AuthenticatedRequest, @Body() postDto: dto.PostDto) {
     this.logger.log(`There is a request to create an device`);
-    return this.devicesApiService.post(request.params.organizationId, postDto);
+    return this.devicesRestApiService.post(request.params.organizationId, postDto);
   }
 
   @ApiOperation({ summary: 'Search devices (organization viewer minimal role)' })
@@ -62,7 +62,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getSearch(@Req() request: AuthenticatedRequest, @Query('name') query: string) {
     this.logger.log(`There is a request to get search device`);
-    return this.devicesApiService.getSearch(request.params.organizationId, query);
+    return this.devicesRestApiService.getSearch(request.params.organizationId, query);
   }
 
   @ApiOperation({ summary: 'Get device by id (organization viewer minimal role)' })
@@ -84,7 +84,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async get(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get device by id`);
-    return this.devicesApiService.get(request.params.organizationId, request.params.deviceId);
+    return this.devicesRestApiService.get(request.params.organizationId, request.params.deviceId);
   }
 
   @ApiOperation({ summary: 'Update device (organization operator minimal role)' })
@@ -105,7 +105,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async patch(@Req() request: AuthenticatedRequest, @Body() patchDto: dto.PatchDto) {
     this.logger.log(`There is a request to update device`);
-    return this.devicesApiService.patch(request.params.organizationId, request.params.deviceId, patchDto);
+    return this.devicesRestApiService.patch(request.params.organizationId, request.params.deviceId, patchDto);
   }
 
   @ApiOperation({ summary: 'Delete device (organization operator minimal role)' })
@@ -120,7 +120,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async delete(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to delete device`);
-    return this.devicesApiService.delete(request.params.deviceId);
+    return this.devicesRestApiService.delete(request.params.deviceId);
   }
 
   @ApiOperation({ summary: 'Get pin list (organization viewer minimal role)' })
@@ -138,7 +138,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getPinList(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get pin list`);
-    return this.devicesApiService.getPinList(request.params.deviceId);
+    return this.devicesRestApiService.getPinList(request.params.deviceId);
   }
 
   @ApiOperation({ summary: 'Create or update widget box (organization operator minimal role)' })
@@ -160,7 +160,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async putWidgetBox(@Req() request: AuthenticatedRequest, @Body() putWidgetBoxDto: dto.PutWidgetBoxDto) {
     this.logger.log(`There is a request to create or update widget box`);
-    return this.devicesApiService.putWidgetBox(request.params.organizationId, request.params.deviceId, putWidgetBoxDto);
+    return this.devicesRestApiService.putWidgetBox(request.params.organizationId, request.params.deviceId, putWidgetBoxDto);
   }
 
   @ApiOperation({ summary: 'Get widget box list (organization viewer minimal role)' })
@@ -189,7 +189,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getWidgetBoxesList(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get widget boxes list`);
-    return this.devicesApiService.getWidgetBoxesList(request.params.organizationId, request.params.deviceId);
+    return this.devicesRestApiService.getWidgetBoxesList(request.params.organizationId, request.params.deviceId);
   }
 
   @ApiOperation({ summary: 'Get widget box by id (organization viewer minimal role)' })
@@ -217,7 +217,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getWidgetBox(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get widget box by id`);
-    return this.devicesApiService.getWidgetBox(request.params.organizationId, request.params.deviceId, request.params.widgetBoxId);
+    return this.devicesRestApiService.getWidgetBox(request.params.organizationId, request.params.deviceId, request.params.widgetBoxId);
   }
 
   @ApiOperation({ summary: 'Delete widget box (organization operator minimal role)' })
@@ -233,7 +233,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async deleteWidgetBox(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to delete widget box`);
-    return this.devicesApiService.deleteWidgetBox(request.params.organizationId, request.params.deviceId, request.params.widgetBoxId);
+    return this.devicesRestApiService.deleteWidgetBox(request.params.organizationId, request.params.deviceId, request.params.widgetBoxId);
   }
 
   @ApiOperation({ summary: 'Get device report (organization viewer minimal role)' })
@@ -254,7 +254,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getReport(@Req() request: AuthenticatedRequest, @Query('start') start: string, @Query('end') end: string, @Query('pin') pin: string) {
     this.logger.log(`There is a request to get device report`);
-    return this.devicesApiService.getReport(request.params.organizationId, request.params.deviceId, pin, start, end);
+    return this.devicesRestApiService.getReport(request.params.organizationId, request.params.deviceId, pin, start, end);
   }
 
   @ApiOperation({ summary: 'Create notification events (organization operator minimal role)' })
@@ -282,7 +282,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async postNotificationEvent(@Req() request: AuthenticatedRequest, @Body() postNotificationEvent: dto.PostNotificationEventDto) {
     this.logger.log(`There is a request to create notification events`);
-    return this.devicesApiService.postNotificationEvent(request.params.organizationId, request.params.deviceId, postNotificationEvent);
+    return this.devicesRestApiService.postNotificationEvent(request.params.organizationId, request.params.deviceId, postNotificationEvent);
   }
 
   @ApiOperation({ summary: 'Get notification events list (organization viewer minimal role)' })
@@ -310,7 +310,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getNotificationEventsList(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get notification events list`);
-    return this.devicesApiService.getNotificationEventsList(request.params.organizationId, request.params.deviceId);
+    return this.devicesRestApiService.getNotificationEventsList(request.params.organizationId, request.params.deviceId);
   }
 
   @ApiOperation({ summary: 'Get notification events by id (organization viewer minimal role)' })
@@ -338,7 +338,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getNotificationEvent(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get notification events by id`);
-    return this.devicesApiService.getNotificationEvent(request.params.organizationId, request.params.deviceId, request.params.notificationEventId);
+    return this.devicesRestApiService.getNotificationEvent(request.params.organizationId, request.params.deviceId, request.params.notificationEventId);
   }
 
   @ApiOperation({ summary: 'Update notification events (organization operator minimal role)' })
@@ -364,7 +364,7 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async patchNotificationEvent(@Req() request: AuthenticatedRequest, @Body() patchNotificationEvent: dto.PatchNotificationEventDto) {
     this.logger.log(`There is a request to update notification events`);
-    return this.devicesApiService.patchNotificationEvent(request.params.organizationId, request.params.deviceId, request.params.notificationEventId, patchNotificationEvent);
+    return this.devicesRestApiService.patchNotificationEvent(request.params.organizationId, request.params.deviceId, request.params.notificationEventId, patchNotificationEvent);
   }
 
   @ApiOperation({ summary: 'Delete notification events (organization operator minimal role)' })
@@ -380,6 +380,6 @@ export class DevicesApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.OPERATOR)
   async deleteNotificationEvent(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to delete notification events`);
-    return this.devicesApiService.deleteNotificationEvent(request.params.organizationId, request.params.deviceId, request.params.notificationEventId);
+    return this.devicesRestApiService.deleteNotificationEvent(request.params.organizationId, request.params.deviceId, request.params.notificationEventId);
   }
 }

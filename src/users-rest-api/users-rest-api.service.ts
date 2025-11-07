@@ -4,8 +4,8 @@ import { Repository, ILike } from 'typeorm';
 import { User } from '../common/entities';
 
 @Injectable()
-export class UsersApiService {
-  private readonly logger = new Logger(UsersApiService.name);
+export class UsersRestApiService {
+  private readonly logger = new Logger(UsersRestApiService.name);
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }

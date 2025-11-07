@@ -1,7 +1,7 @@
 import { Controller, Get, Logger, UseGuards, Req, Query, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { UsersApiService } from './users-api.service';
+import { UsersRestApiService } from './users-rest-api.service';
 import AuthenticatedRequest from '../common/interfaces/authenticated-request.interface';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
 import { UserRoles } from '../common/decorators/user-roles.decorator';
@@ -11,10 +11,10 @@ import { UserRole } from '../common/entities';
 @ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
 @Controller('users')
-export class UsersApiController {
-  private readonly logger = new Logger(UsersApiController.name);
+export class UsersRestApiController {
+  private readonly logger = new Logger(UsersRestApiController.name);
   constructor(
-    private readonly usersApiService: UsersApiService
+    private readonly usersRestApiService: UsersRestApiService
   ) { }
 
   @ApiOperation({ summary: 'Search users (admin System minimal role)' })
@@ -39,7 +39,7 @@ export class UsersApiController {
   @UserRoles(UserRole.ADMIN_SYSTEM)
   async getSearch(@Query('identity') identity: string) {
     this.logger.log(`There is a request to search users`);
-    return this.usersApiService.getSearch(identity);
+    return this.usersRestApiService.getSearch(identity);
   }
 
   @ApiOperation({ summary: 'Get users by id (admin System minimal role)' })
@@ -67,6 +67,6 @@ export class UsersApiController {
   @UserRoles(UserRole.ADMIN_SYSTEM)
   async get(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get users by id`);
-    return this.usersApiService.get(request.params.userId);
+    return this.usersRestApiService.get(request.params.userId);
   }
 }

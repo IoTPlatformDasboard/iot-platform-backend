@@ -1,7 +1,7 @@
 import { Controller, Logger, Req, UseGuards, Get, Delete, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiOkResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { NotificationsApiService } from './notifications-api.service';
+import { NotificationsRestApiService } from './notifications-rest-api.service';
 import AuthenticatedRequest from '../common/interfaces/authenticated-request.interface';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
 import { UserRoles } from '../common/decorators/user-roles.decorator';
@@ -11,10 +11,10 @@ import { UserRole } from '../common/entities';
 @ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
 @Controller('notifications')
-export class NotificationsApiController {
-  private readonly logger = new Logger(NotificationsApiController.name);
+export class NotificationsRestApiController {
+  private readonly logger = new Logger(NotificationsRestApiController.name);
   constructor(
-    private readonly notificationsApiService: NotificationsApiService
+    private readonly notificationsRestApiService: NotificationsRestApiService
   ) {}
 
   @ApiOperation({ summary: 'Get notifications (lokal member minimal role)' })
@@ -39,7 +39,7 @@ export class NotificationsApiController {
   @UserRoles(UserRole.LOCAL_MEMBER)
   async get(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get notifications`);
-    return this.notificationsApiService.get(request.user.id);
+    return this.notificationsRestApiService.get(request.user.id);
   }
 
   @ApiOperation({ summary: 'Delete notification by id (lokal member minimal role)' })
@@ -56,7 +56,7 @@ export class NotificationsApiController {
   @UserRoles(UserRole.LOCAL_MEMBER)
   async delete(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to delete notification by id`);
-    return this.notificationsApiService.delete(request.params.notificationId);
+    return this.notificationsRestApiService.delete(request.params.notificationId);
   }
 
   @ApiOperation({ summary: 'Delete all notifications (lokal member minimal role)' })
@@ -72,6 +72,6 @@ export class NotificationsApiController {
   @UserRoles(UserRole.LOCAL_MEMBER)
   async deleteAll(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to delete all notifications`);
-    return this.notificationsApiService.deleteAll(request.user.id);
+    return this.notificationsRestApiService.deleteAll(request.user.id);
   }
 }

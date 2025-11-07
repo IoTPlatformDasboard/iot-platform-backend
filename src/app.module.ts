@@ -6,12 +6,12 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthApiModule } from './auth-api/auth-api.module';
+import { AuthRestApiModule } from './auth-rest-api/auth-rest-api.module';
 import { LoggingMiddleware } from './common/middleware/logging.middleware';
-import { OrganizationsApiModule } from './organizations-api/organizations-api.module';
-import { NotificationsApiModule } from './notifications-api/notifications-api.module';
-import { DevicesApiModule } from './devices-api/devices-api.module';
-import { UsersApiModule } from './users-api/users-api.module';
+import { OrganizationsRestApiModule } from './organizations-rest-api/organizations-rest-api.module';
+import { NotificationsRestApiModule } from './notifications-rest-api/notifications-rest-api.module';
+import { DevicesRestApiModule } from './devices-rest-api/devices-rest-api.module';
+import { UsersRestApiModule } from './users-rest-api/users-rest-api.module';
 import { MqttModule } from './mqtt/mqtt.module';
 
 @Module({
@@ -55,11 +55,11 @@ import { MqttModule } from './mqtt/mqtt.module';
         },
       ],
     }),
-    AuthApiModule,
-    OrganizationsApiModule,
-    NotificationsApiModule,
-    DevicesApiModule,
-    UsersApiModule,
+    AuthRestApiModule,
+    OrganizationsRestApiModule,
+    NotificationsRestApiModule,
+    DevicesRestApiModule,
+    UsersRestApiModule,
     MqttModule,
   ],
   controllers: [AppController],

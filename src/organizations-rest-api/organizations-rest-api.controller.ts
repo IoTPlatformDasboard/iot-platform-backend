@@ -1,7 +1,7 @@
 import { Controller, Logger, UseGuards, UseInterceptors, Req, Body, Post, Get, Patch, Delete, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiOkResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { OrganizationsApiService } from './organizations-api.service';
+import { OrganizationsRestApiService } from './organizations-rest-api.service';
 import * as dto from './dto';
 import AuthenticatedRequest from '../common/interfaces/authenticated-request.interface';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
@@ -15,10 +15,10 @@ import { UserRole, OrganizationMemberRole } from '../common/entities';
 @ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
 @Controller('organizations')
-export class OrganizationsApiController {
-  private readonly logger = new Logger(OrganizationsApiController.name);
+export class OrganizationsRestApiController {
+  private readonly logger = new Logger(OrganizationsRestApiController.name);
   constructor(
-    private readonly organizationsApiService: OrganizationsApiService
+    private readonly organizationsRestApiService: OrganizationsRestApiService
   ) { }
 
   @ApiOperation({ summary: 'Get user organizations list (local member minimal role)' })
@@ -44,7 +44,7 @@ export class OrganizationsApiController {
   @UserRoles(UserRole.LOCAL_MEMBER)
   async getList(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get organization list`);
-    return this.organizationsApiService.getList(request.user.id);
+    return this.organizationsRestApiService.getList(request.user.id);
   }
 
   @ApiOperation({ summary: 'Propose an organization (regular user minimal role)' })
@@ -69,7 +69,7 @@ export class OrganizationsApiController {
   @UserRoles(UserRole.REGULAR_USER)
   async postPropose(@Req() request: AuthenticatedRequest, @Body() postProposeDto: dto.PostProposeDto) {
     this.logger.log(`There is a request to propose an organization`);
-    return this.organizationsApiService.postPropose(request.user.id, postProposeDto);
+    return this.organizationsRestApiService.postPropose(request.user.id, postProposeDto);
   }
 
   @ApiOperation({ summary: 'Verify organization (admin system minimal role)' })
@@ -85,7 +85,7 @@ export class OrganizationsApiController {
   @UserRoles(UserRole.ADMIN_SYSTEM)
   async patchVerify(@Body() patchVerifyDto: dto.PatchVerifyDto) {
     this.logger.log(`There is a request to verify an organization`);
-    return this.organizationsApiService.patchVerify(patchVerifyDto);
+    return this.organizationsRestApiService.patchVerify(patchVerifyDto);
   }
 
   @ApiOperation({ summary: 'Unverify organization (admin system minimal role)' })
@@ -101,7 +101,7 @@ export class OrganizationsApiController {
   @UserRoles(UserRole.ADMIN_SYSTEM)
   async patchUnverify(@Body() patchUnverifyDto: dto.PatchUnverifyDto) {
     this.logger.log(`There is a request to unverify an organization`);
-    return this.organizationsApiService.patchUnverify(patchUnverifyDto);
+    return this.organizationsRestApiService.patchUnverify(patchUnverifyDto);
   }
 
   @ApiOperation({ summary: 'Get organization profile (organization viewer minimal role)' })
@@ -128,7 +128,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getOrganizationProfile(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get organization profile`);
-    return this.organizationsApiService.getOrganizationProfile(request.user.id, request.params.organizationId);
+    return this.organizationsRestApiService.getOrganizationProfile(request.user.id, request.params.organizationId);
   }
 
   @ApiOperation({ summary: 'Update organization profile (organization admin minimal role)' })
@@ -165,7 +165,7 @@ export class OrganizationsApiController {
   @UseInterceptors(UploadPictureInterceptorFactory('organization_picture'))
   async patchOrganizationProfile(@Req() request: AuthenticatedRequest, @Body() patchOrganizationProfileDto: dto.PatchOrganizationProfileDto) {
     this.logger.log(`There is a request to update organization profile`);
-    return this.organizationsApiService.patchOrganizationProfile(request, request.params.organizationId, patchOrganizationProfileDto, request.file?.filename ?? null);
+    return this.organizationsRestApiService.patchOrganizationProfile(request, request.params.organizationId, patchOrganizationProfileDto, request.file?.filename ?? null);
   }
 
   @ApiOperation({ summary: 'Search members (organization admin minimal role)' })
@@ -190,7 +190,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.ADMIN)
   async getSearchMembers(@Query('identity') identity: string) {
     this.logger.log(`There is a request to search users`);
-    return this.organizationsApiService.getSearchMembers(identity);
+    return this.organizationsRestApiService.getSearchMembers(identity);
   }
 
   @ApiOperation({ summary: 'Member invitation (organization admin minimal role)' })
@@ -216,7 +216,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.ADMIN)
   async postAddMember(@Req() request: AuthenticatedRequest, @Body() postMemberInvitationDto: dto.PostMemberInvitationDto) {
     this.logger.log(`There is a request to invite member`);
-    return this.organizationsApiService.postMemberInvitation(request.params.organizationId, postMemberInvitationDto);
+    return this.organizationsRestApiService.postMemberInvitation(request.params.organizationId, postMemberInvitationDto);
   }
 
   @ApiOperation({ summary: 'Member invitation response (regular user minimal role)' })
@@ -236,7 +236,7 @@ export class OrganizationsApiController {
   @UserRoles(UserRole.REGULAR_USER)
   async patchMemberInvitationResponse(@Req() request: AuthenticatedRequest, @Body() patchInvitationResponseDto: dto.PatchInvitationResponseDto) {
     this.logger.log(`There is a request to accept or reject invitation to join organization`);
-    return this.organizationsApiService.patchMemberInvitationResponse(request.user.id, request.params.organizationId, patchInvitationResponseDto);
+    return this.organizationsRestApiService.patchMemberInvitationResponse(request.user.id, request.params.organizationId, patchInvitationResponseDto);
   }
 
   @ApiOperation({ summary: 'Create local member (organization admin minimal role)' })
@@ -267,7 +267,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.ADMIN)
   async postLocalMember(@Req() request: AuthenticatedRequest, @Body() localMemberDto: dto.PostLocalMemberDto) {
     this.logger.log(`There is a request to create local member`);
-    return this.organizationsApiService.postLocalMember(request.params.organizationId, localMemberDto);
+    return this.organizationsRestApiService.postLocalMember(request.params.organizationId, localMemberDto);
   }
 
   @ApiOperation({ summary: 'Get member list (organization viewer minimal role)' })
@@ -292,7 +292,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async getMemberList(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get member list`);
-    return this.organizationsApiService.getMemberList(request.params.organizationId);
+    return this.organizationsRestApiService.getMemberList(request.params.organizationId);
   }
 
   @ApiOperation({ summary: 'Change member roles (organization admin minimal role)' })
@@ -309,7 +309,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.ADMIN)
   async patchMemberRoles(@Req() request: AuthenticatedRequest, @Body() patchMemberRolesDto: dto.PatchMemberRolesDto) {
     this.logger.log(`There is a request to change member roles`);
-    return this.organizationsApiService.patchMemberRoles(request.params.organizationId, patchMemberRolesDto);
+    return this.organizationsRestApiService.patchMemberRoles(request.params.organizationId, patchMemberRolesDto);
   }
 
   @ApiOperation({ summary: 'Delete member (organization admin minimal role)' })
@@ -327,7 +327,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.ADMIN)
   async deleteMember(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to delete member`);
-    return this.organizationsApiService.deleteMember(request.params.organizationId, request.params.userId);
+    return this.organizationsRestApiService.deleteMember(request.params.organizationId, request.params.userId);
   }
 
   @ApiOperation({ summary: 'Leave organization (organization viewer minimal role)' })
@@ -344,7 +344,7 @@ export class OrganizationsApiController {
   @OrganizationMemberRoles(OrganizationMemberRole.VIEWER)
   async deleteLeave(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to leave organization`);
-    return this.organizationsApiService.deleteLeave(request.user.id, request.params.organizationId);
+    return this.organizationsRestApiService.deleteLeave(request.user.id, request.params.organizationId);
   }
 
   @ApiOperation({ summary: 'Search organizations (admin system minimal role)' })
@@ -368,7 +368,7 @@ export class OrganizationsApiController {
   @UserRoles(UserRole.ADMIN_SYSTEM)
   async getSearch(@Query('keyword') keyword: string) {
     this.logger.log(`There is a request to search organizations`);
-    return this.organizationsApiService.getSearch(keyword);
+    return this.organizationsRestApiService.getSearch(keyword);
   }
 
   @ApiOperation({ summary: 'Get organization by id (admin system minimal role)' })
@@ -398,6 +398,6 @@ export class OrganizationsApiController {
   @UserRoles(UserRole.ADMIN_SYSTEM)
   async get(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to get organization by id`);
-    return this.organizationsApiService.get(request.params.organizationId);
+    return this.organizationsRestApiService.get(request.params.organizationId);
   }
 }

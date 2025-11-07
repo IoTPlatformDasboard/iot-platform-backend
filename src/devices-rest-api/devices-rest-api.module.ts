@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DevicesApiService } from './devices-api.service';
-import { DevicesApiController } from './devices-api.controller';
-import { AuthApiModule } from 'src/auth-api/auth-api.module';
+import { DevicesRestApiService } from './devices-rest-api.service';
+import { DevicesRestApiController } from './devices-rest-api.controller';
+import { AuthRestApiModule } from 'src/auth-rest-api/auth-rest-api.module';
 import { Organization, OrganizationMember, Device, WidgetBox, DeviceData, NotificationEvent } from '../common/entities';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Organization, OrganizationMember, Device, WidgetBox, DeviceData, NotificationEvent]),
-    AuthApiModule
+    AuthRestApiModule
   ],
-  controllers: [DevicesApiController],
-  providers: [DevicesApiService],
+  controllers: [DevicesRestApiController],
+  providers: [DevicesRestApiService],
 })
-export class DevicesApiModule {}
+export class DevicesRestApiModule {}

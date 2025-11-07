@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { UserNotification } from '../common/entities';
 
 @Injectable()
-export class NotificationsApiService {
-  private readonly logger = new Logger(NotificationsApiService.name);
+export class NotificationsRestApiService {
+  private readonly logger = new Logger(NotificationsRestApiService.name);
   constructor(
     @InjectRepository(UserNotification) private readonly userNotificationRepository: Repository<UserNotification>,
   ) {}

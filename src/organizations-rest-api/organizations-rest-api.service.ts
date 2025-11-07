@@ -12,8 +12,8 @@ import * as dto from './dto';
 import { FcmService } from '../common/services/fcm.service';
 
 @Injectable()
-export class OrganizationsApiService {
-  private readonly logger = new Logger(OrganizationsApiService.name);
+export class OrganizationsRestApiService {
+  private readonly logger = new Logger(OrganizationsRestApiService.name);
   private readonly fcmService: FcmService;
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,

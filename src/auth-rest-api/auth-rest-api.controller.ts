@@ -2,7 +2,7 @@ import { Controller, Logger, UseGuards, Req, Res, Body, Query, Post, Get, Patch,
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiOkResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Request, Response } from 'express';
-import { AuthApiService } from './auth-api.service';
+import { AuthRestApiService } from './auth-rest-api.service';
 import * as dto from './dto';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
 import { UserRole } from '../common/entities';
@@ -13,10 +13,10 @@ import { UploadPictureInterceptorFactory } from '../common/interceptors/upload-p
 @ApiTags('Auth')
 @UseInterceptors(CacheInterceptor)
 @Controller('auth')
-export class AuthApiController {
-  private readonly logger = new Logger(AuthApiController.name);
+export class AuthRestApiController {
+  private readonly logger = new Logger(AuthRestApiController.name);
   constructor(
-    private readonly authService: AuthApiService, 
+    private readonly authRestApiService: AuthRestApiService, 
   ) {}
 
   @ApiOperation({ summary: 'Register' })
@@ -30,7 +30,7 @@ export class AuthApiController {
   @Post('register')
   async postRegister(@Req() request: Request, @Body() postRegisterDto: dto.PostRegisterDto) {
     this.logger.log(`There is a register request`);
-    return this.authService.postRegister(request, postRegisterDto);
+    return this.authRestApiService.postRegister(request, postRegisterDto);
   }
 
   @ApiOperation({ summary: 'Verify email' })
@@ -64,7 +64,7 @@ export class AuthApiController {
   @Get('verify-email')
   async getVerifyEmail(@Query('token') token: string, @Res() res: Response) {
     this.logger.log(`There is a verify email request`);
-    return this.authService.getVerifyEmail(token, res);
+    return this.authRestApiService.getVerifyEmail(token, res);
   }
 
   @ApiOperation({ summary: 'Login' })
@@ -85,7 +85,7 @@ export class AuthApiController {
   @Post('login')
   async postLogin(@Body() postLoginDto: dto.PostLoginDto) {
     this.logger.log(`There is a login request`);
-    return this.authService.postLogin(postLoginDto);
+    return this.authRestApiService.postLogin(postLoginDto);
   }
 
   @ApiOperation({ summary: 'Forgot password email' })
@@ -99,7 +99,7 @@ export class AuthApiController {
   @Post('forgot-password')
   async postForgotPassword(@Req() request: Request, @Body() PostForgotPasswordDto: dto.PostForgotPasswordDto) {
     this.logger.log(`There is a forgot password request`);
-    return this.authService.postForgotPassword(request, PostForgotPasswordDto);
+    return this.authRestApiService.postForgotPassword(request, PostForgotPasswordDto);
   }
 
   @ApiOperation({ summary: 'Reset password page' })
@@ -144,7 +144,7 @@ export class AuthApiController {
   @Get('reset-password/:token')
   async getResetPassword(@Req() request: Request, @Res() res: Response,) {
     this.logger.log(`There is a get reset password request`);
-    return this.authService.getResetPassword(request, request.params.token, res);
+    return this.authRestApiService.getResetPassword(request, request.params.token, res);
   }
 
   @ApiOperation({ summary: 'Reset password form' })
@@ -172,7 +172,7 @@ export class AuthApiController {
   @Post('reset-password')
   async postResetPassword(@Body() resetPasswordDto: dto.PostResetPasswordDto, @Res() res: Response) {
     this.logger.log(`There is a post reset password request`);
-    return this.authService.postResetPassword(resetPasswordDto, res);
+    return this.authRestApiService.postResetPassword(resetPasswordDto, res);
   }
 
   @ApiOperation({ summary: 'Get profile (lokal member minimal role)' })
@@ -198,7 +198,7 @@ export class AuthApiController {
   @UserRoles(UserRole.LOCAL_MEMBER)
   @Get('profile')
   async getProfile(@Req() request: AuthenticatedRequest) {
-    return this.authService.getProfile(request.user.id);
+    return this.authRestApiService.getProfile(request.user.id);
   }
 
   @ApiOperation({ summary: 'Update profile username, phone number, and profile picture (regular user minimal role)' })
@@ -238,7 +238,7 @@ export class AuthApiController {
   @UseInterceptors(UploadPictureInterceptorFactory('profile_picture'))
   async patchProfile(@Req() request: AuthenticatedRequest, @Body() patchProfileDto: dto.PatchProfileDto) {
     this.logger.log(`There is an update profile request`);
-    return this.authService.patchProfile(request, request.user.id, patchProfileDto, request.file?.filename ?? null);
+    return this.authRestApiService.patchProfile(request, request.user.id, patchProfileDto, request.file?.filename ?? null);
   }
 
   @ApiOperation({ summary: 'Change email (regular user minimal role)' })
@@ -255,7 +255,7 @@ export class AuthApiController {
   @UserRoles(UserRole.REGULAR_USER)  
   async patchEmail(@Req() request: AuthenticatedRequest, @Body() patchEmailDto: dto.PatchEmailDto) {
     this.logger.log(`There is a change email request`);
-    return this.authService.patchEmail(request, request.user.id, patchEmailDto);
+    return this.authRestApiService.patchEmail(request, request.user.id, patchEmailDto);
   }
 
   @ApiOperation({ summary: 'Change password (lokal member minimal role)' })
@@ -272,6 +272,6 @@ export class AuthApiController {
   @UserRoles(UserRole.LOCAL_MEMBER)
   async patchPassword(@Req() request: AuthenticatedRequest, @Body() patchPasswordDto: dto.PatchPasswordDto) {
     this.logger.log(`There is a change password request`);
-    return this.authService.patchPassword(request.user.id, patchPasswordDto);
+    return this.authRestApiService.patchPassword(request.user.id, patchPasswordDto);
   }
 }
