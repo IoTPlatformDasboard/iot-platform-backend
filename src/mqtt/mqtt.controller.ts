@@ -1,14 +1,18 @@
 import { Controller, Logger } from '@nestjs/common';
-import { MessagePattern, Payload, Ctx, MqttContext } from '@nestjs/microservices';
+import {
+  MessagePattern,
+  Payload,
+  Ctx,
+  MqttContext,
+} from '@nestjs/microservices';
 import { MqttService } from './mqtt.service';
 
 @Controller()
 export class MqttController {
   private readonly logger = new Logger(MqttController.name);
-  constructor(
-    private readonly mqttService: MqttService
-  ) { }
+  constructor(private readonly mqttService: MqttService) {}
 
+  // Topic reiceived format:
   @MessagePattern('auth-code/+')
   async getDeviceData(@Payload() data: number[], @Ctx() context: MqttContext) {
     this.logger.log(`Received MQTT message on topic: ${context.getTopic()}`);

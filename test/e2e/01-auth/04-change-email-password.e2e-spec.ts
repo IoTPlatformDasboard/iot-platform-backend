@@ -11,7 +11,9 @@ import { VerifyEmailToken } from 'src/common/entities';
 
 describe('Auth Controller (e2e)', () => {
   let app: NestExpressApplication;
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
+  const apiVersion = '/api/v1';
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
   const email = 'userTest2.1@example.com';
 
   beforeAll(async () => {
@@ -44,14 +46,14 @@ describe('Auth Controller (e2e)', () => {
     await app.close();
   });
 
-  // Change email 
+  // Change email
   it('successfully change email', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/auth/email')
+      .patch(`${apiVersion}/auth/email`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         new_email: email,
-      })
+      });
 
     console.log('successfully change email response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -61,11 +63,11 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed change email', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/auth/email')
+      .patch(`${apiVersion}/auth/email`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         new_email: email,
-      })
+      });
 
     console.log('failed change email response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -76,13 +78,15 @@ describe('Auth Controller (e2e)', () => {
   // Verify email
   it('successfully verify email', async () => {
     const dataSource = app.get(DataSource);
-    const verifyEmailToken = await dataSource.getRepository(VerifyEmailToken).findOne({
-      select: { token: true },
-      where: { email },
-    });
+    const verifyEmailToken = await dataSource
+      .getRepository(VerifyEmailToken)
+      .findOne({
+        select: { token: true },
+        where: { email },
+      });
 
     const res = await request(app.getHttpServer())
-      .get(`/auth/verify-email/`)
+      .get(`${apiVersion}/auth/verify-email/`)
       .query({ token: verifyEmailToken?.token });
 
     console.log('successfully verify email response:', res.text);
@@ -93,12 +97,12 @@ describe('Auth Controller (e2e)', () => {
   // Change password
   it('successfully change password', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/auth/password')
+      .patch(`${apiVersion}/auth/password`)
       .set('Authorization', `Bearer ${token}`)
       .send({
-        old_password: "12345678",
-        new_password: "12345678"
-      })
+        old_password: '12345678',
+        new_password: '12345678',
+      });
 
     console.log('successfully change password response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -108,12 +112,12 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed change password', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/auth/password')
+      .patch(`${apiVersion}/auth/password`)
       .set('Authorization', `Bearer ${token}`)
       .send({
-        old_password: "123456789",
-        new_password: "12345678"
-      })
+        old_password: '123456789',
+        new_password: '12345678',
+      });
 
     console.log('failed change password response:', res.body);
     expect(res.body.message).toBeDefined();

@@ -11,6 +11,7 @@ import { Organization, Device } from 'src/common/entities';
 
 describe('Device Controller (e2e)', () => {
   let app: NestExpressApplication;
+  const apiVersion = '/api/v1';
   const organizationName = "organization_test2";
   const deviceName = "Device test organization_test2";
   const adminOrganizationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
@@ -55,7 +56,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .post(`/organizations/${organization?.id}/devices`)
+      .post(`${apiVersion}/organizations/${organization?.id}/devices`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         name: deviceName,
@@ -75,7 +76,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .post(`/organizations/${organization?.id}/devices`)
+      .post(`${apiVersion}/organizations/${organization?.id}/devices`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}}`)
       .send({
         name: deviceName,
@@ -96,7 +97,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/search?name=`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/search?name=`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully get devices search response:', res.body);
@@ -113,7 +114,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/search?name=`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/search?name=`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
 
     console.log('failed get devices search response:', res.body);
@@ -135,7 +136,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully get devices by id response:', res.body);
@@ -156,7 +157,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
 
     console.log('failed get devices by id response:', res.body);
@@ -178,7 +179,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/devices/${device?.id}`)
+      .patch(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         name: `${deviceName} updated`,
@@ -202,7 +203,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/devices/${device?.id}`)
+      .patch(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         name: `${deviceName} updated`,
@@ -227,7 +228,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/devices/${device?.id}`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully delete device response:', res.body);
@@ -248,7 +249,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/devices/${device?.id}`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
 
     console.log('failed delete device response:', res.body);

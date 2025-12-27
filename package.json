@@ -1,7 +1,7 @@
 {
-  "name": "iot-bridge-backend",
+  "name": "iot-backend-platform",
   "version": "0.0.1",
-  "description": "Backend for IoT Bridge Application",
+  "description": "IoT Backend Platform",
   "author": "Bill Valentinov",
   "private": true,
   "license": "UNLICENSED",

@@ -9,7 +9,9 @@ import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 
 describe('Auth Controller (e2e)', () => {
   let app: NestExpressApplication;
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
+  const apiVersion = '/api/v1';
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -44,8 +46,8 @@ describe('Auth Controller (e2e)', () => {
   // Get profile
   it.only('successfully get profile', async () => {
     const res = await request(app.getHttpServer())
-      .get('/auth/profile')
-      .set('Authorization', `Bearer ${token}`)
+      .get(`${apiVersion}/auth/profile`)
+      .set('Authorization', `Bearer ${token}`);
 
     console.log('successfully get profile response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -55,8 +57,8 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed get profile', async () => {
     const res = await request(app.getHttpServer())
-      .get('/auth/profile')
-      .set('Authorization', `Bearer invalid_token`)
+      .get(`${apiVersion}/auth/profile`)
+      .set('Authorization', `Bearer invalid_token`);
 
     console.log('failed get profile response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -67,7 +69,7 @@ describe('Auth Controller (e2e)', () => {
   // Update profile
   it('successfully update profile', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/auth/profile')
+      .patch(`${apiVersion}/auth/profile`)
       .set('Authorization', `Bearer ${token}`)
       .field('username', 'userTest2.1') // field biasa
       .field('phone_number', '081234567895') // field biasa
@@ -81,12 +83,12 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed update profile', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/auth/profile')
+      .patch(`${apiVersion}/auth/profile`)
       .set('Authorization', `Bearer ${token}`)
       .send({
         username: 'Bill Valentinov',
         phone_number: '081234567890',
-      })
+      });
 
     console.log('failed update profile response:', res.body);
     expect(res.body.message).toBeDefined();

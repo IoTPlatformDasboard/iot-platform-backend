@@ -11,9 +11,12 @@ import { Organization } from 'src/common/entities';
 
 describe('Organization Controller (e2e)', () => {
   let app: NestExpressApplication;
-  const organizationName = "organization_test2";
-  const adminOrganizationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
-  const nonMemberOrganizationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1NTVmNmI1LWM3MjQtNDVhNi04N2NmLTk1Nzg2ZWIyYTAyMCIsInJvbGUiOiJBZG1pbiBTeXN0ZW0iLCJpYXQiOjE3NDY1MTQ3MTl9.NdUZTygW-nirskKvKgd_OloX7I9BAFYh3o2sWGxNVGE';
+  const apiVersion = '/api/v1';
+  const organizationName = 'organization_test2';
+  const adminOrganizationToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
+  const nonMemberOrganizationToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1NTVmNmI1LWM3MjQtNDVhNi04N2NmLTk1Nzg2ZWIyYTAyMCIsInJvbGUiOiJBZG1pbiBTeXN0ZW0iLCJpYXQiOjE3NDY1MTQ3MTl9.NdUZTygW-nirskKvKgd_OloX7I9BAFYh3o2sWGxNVGE';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -54,8 +57,8 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/profile`)
-      .set('Authorization', `Bearer ${adminOrganizationToken}`)
+      .get(`${apiVersion}/organizations/${organization?.id}/profile`)
+      .set('Authorization', `Bearer ${adminOrganizationToken}`);
 
     console.log('successfully patch unverify response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -65,8 +68,8 @@ describe('Organization Controller (e2e)', () => {
 
   it('failed get profile', async () => {
     const res = await request(app.getHttpServer())
-      .get(`/organizations/invalid_id/profile`)
-      .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
+      .get(`${apiVersion}/organizations/invalid_id/profile`)
+      .set('Authorization', `Bearer ${nonMemberOrganizationToken}`);
 
     console.log('failed patch unverify response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -83,13 +86,13 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/profile`)
+      .patch(`${apiVersion}/organizations/${organization?.id}/profile`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         name: organizationName,
         description: 'This is a description of the organization',
         location: 'Universitas Lampung',
-      })
+      });
 
     console.log('successfully patch profile response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -105,13 +108,13 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/profile`)
+      .patch(`${apiVersion}/organizations/${organization?.id}/profile`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
       .send({
         name: organizationName,
         description: 'This is a description of the organization',
         location: 'Universitas Lampung',
-      })
+      });
 
     console.log('failed patch profile response:', res.body);
     expect(res.body.message).toBeDefined();

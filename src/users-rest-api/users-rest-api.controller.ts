@@ -1,5 +1,19 @@
-import { Controller, Get, Logger, UseGuards, Req, Query, UseInterceptors } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Logger,
+  UseGuards,
+  Req,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { UsersRestApiService } from './users-rest-api.service';
 import AuthenticatedRequest from '../common/interfaces/authenticated-request.interface';
@@ -10,29 +24,27 @@ import { UserRole } from '../common/entities';
 @ApiTags('Users')
 @ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
-@Controller('users')
+@Controller('api/v1/users')
 export class UsersRestApiController {
   private readonly logger = new Logger(UsersRestApiController.name);
-  constructor(
-    private readonly usersRestApiService: UsersRestApiService
-  ) { }
+  constructor(private readonly usersRestApiService: UsersRestApiService) {}
 
   @ApiOperation({ summary: 'Search users (admin System minimal role)' })
   @ApiOkResponse({
     schema: {
       example: {
-        message: "Users list",
+        message: 'Users list',
         data: [
           {
-            id: "0555f6b5-c724-45a6-87cf-95786eb2a020",
-            username: "Bill Valentinov",
-            email: "valentinovbill0@gmail.com",
-            phone_number: "085691496242",
-            role: "Admin System",
+            id: '0555f6b5-c724-45a6-87cf-95786eb2a020',
+            username: 'Bill Valentinov',
+            email: 'valentinovbill0@gmail.com',
+            phone_number: '085691496242',
+            role: 'Admin System',
           },
-        ]
-      }
-    }
+        ],
+      },
+    },
   })
   @Get('search')
   @UseGuards(UserRolesGuard)
@@ -55,12 +67,12 @@ export class UsersRestApiController {
           organizationMember: [
             {
               organization_name: 'POKDAKAN BINTANG ROSELA JAYA 2',
-              status: 'Accepted'
+              status: 'Accepted',
             },
-          ]
-        }
-      }
-    }
+          ],
+        },
+      },
+    },
   })
   @Get(':userId')
   @UseGuards(UserRolesGuard)

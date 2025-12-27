@@ -11,9 +11,12 @@ import { Organization } from 'src/common/entities';
 
 describe('Organization Controller (e2e)', () => {
   let app: NestExpressApplication;
-  const organizationName = "organization_test2";
-  const regularUserToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
-  const adminSystemToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1NTVmNmI1LWM3MjQtNDVhNi04N2NmLTk1Nzg2ZWIyYTAyMCIsInJvbGUiOiJBZG1pbiBTeXN0ZW0iLCJpYXQiOjE3NDY1MTQ3MTl9.NdUZTygW-nirskKvKgd_OloX7I9BAFYh3o2sWGxNVGE'
+  const apiVersion = '/api/v1';
+  const organizationName = 'organization_test2';
+  const regularUserToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
+  const adminSystemToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA1NTVmNmI1LWM3MjQtNDVhNi04N2NmLTk1Nzg2ZWIyYTAyMCIsInJvbGUiOiJBZG1pbiBTeXN0ZW0iLCJpYXQiOjE3NDY1MTQ3MTl9.NdUZTygW-nirskKvKgd_OloX7I9BAFYh3o2sWGxNVGE';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -48,11 +51,11 @@ describe('Organization Controller (e2e)', () => {
   // Post propose
   it('successfully post propose', async () => {
     const res = await request(app.getHttpServer())
-      .post('/organizations/propose')
+      .post(`${apiVersion}/organizations/propose`)
       .set('Authorization', `Bearer ${regularUserToken}`)
       .send({
-        name: organizationName
-      })
+        name: organizationName,
+      });
 
     console.log('successfully post propose response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -62,11 +65,11 @@ describe('Organization Controller (e2e)', () => {
 
   it('failed post propose', async () => {
     const res = await request(app.getHttpServer())
-      .post('/organizations/propose')
+      .post(`${apiVersion}/organizations/propose`)
       .set('Authorization', `Bearer ${regularUserToken}`)
       .send({
-        name: organizationName
-      })
+        name: organizationName,
+      });
 
     console.log('failed post propose response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -74,11 +77,11 @@ describe('Organization Controller (e2e)', () => {
     expect(res.status).toBeLessThan(500);
   });
 
-  // Get search 
+  // Get search
   it('successfully get search', async () => {
     const res = await request(app.getHttpServer())
-      .get('/organizations/search?keyword=')
-      .set('Authorization', `Bearer ${adminSystemToken}`)
+      .get(`${apiVersion}/organizations/search?keyword=`)
+      .set('Authorization', `Bearer ${adminSystemToken}`);
 
     console.log('successfully get search response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -88,8 +91,8 @@ describe('Organization Controller (e2e)', () => {
 
   it('failed get search', async () => {
     const res = await request(app.getHttpServer())
-      .get('/organizations/search?keyword=')
-      .set('Authorization', `Bearer ${regularUserToken}`)
+      .get(`${apiVersion}/organizations/search?keyword=`)
+      .set('Authorization', `Bearer ${regularUserToken}`);
 
     console.log('failed get search response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -101,16 +104,16 @@ describe('Organization Controller (e2e)', () => {
   it.only('successfully patch unverify', async () => {
     const dataSource = app.get(DataSource);
     const organization = await dataSource.getRepository(Organization).findOne({
-      select: {id: true},
-      where: { name: organizationName }, 
+      select: { id: true },
+      where: { name: organizationName },
     });
 
     const res = await request(app.getHttpServer())
-      .patch('/organizations/unverify')
+      .patch(`${apiVersion}/organizations/unverify`)
       .set('Authorization', `Bearer ${adminSystemToken}`)
       .send({
-        organization_id: organization?.id
-      })
+        organization_id: organization?.id,
+      });
 
     console.log('successfully patch unverify response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -120,11 +123,11 @@ describe('Organization Controller (e2e)', () => {
 
   it.only('failed patch unverify', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/organizations/unverify')
+      .patch(`${apiVersion}/organizations/unverify`)
       .set('Authorization', `Bearer ${regularUserToken}`)
       .send({
-        organization_id: 'invalid_id'
-      })
+        organization_id: 'invalid_id',
+      });
 
     console.log('failed patch unverify response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -136,16 +139,16 @@ describe('Organization Controller (e2e)', () => {
   it('successfully patch verify', async () => {
     const dataSource = app.get(DataSource);
     const organization = await dataSource.getRepository(Organization).findOne({
-      select: {id: true},
-      where: { name: organizationName }, 
+      select: { id: true },
+      where: { name: organizationName },
     });
 
     const res = await request(app.getHttpServer())
-      .patch('/organizations/verify')
+      .patch(`${apiVersion}/organizations/verify`)
       .set('Authorization', `Bearer ${adminSystemToken}`)
       .send({
-        organization_id: organization?.id
-      })
+        organization_id: organization?.id,
+      });
 
     console.log('successfully patch verify response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -155,11 +158,11 @@ describe('Organization Controller (e2e)', () => {
 
   it('failed patch verify', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/organizations/verify')
+      .patch(`${apiVersion}/organizations/verify`)
       .set('Authorization', `Bearer ${regularUserToken}`)
       .send({
-        organization_id: '123'
-      })
+        organization_id: '123',
+      });
 
     console.log('failed patch verify response:', res.body);
     expect(res.body.message).toBeDefined();

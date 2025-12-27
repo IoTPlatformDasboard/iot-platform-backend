@@ -11,6 +11,7 @@ import { Organization } from 'src/common/entities';
 
 describe('Organization Controller (e2e)', () => {
   let app: NestExpressApplication;
+  const apiVersion = '/api/v1';
   const organizationName = "organization_test2";
   const adminOrganizationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
   const memberId = '25d35595-fd8c-4f3f-ad93-023a7c799bd4'
@@ -55,7 +56,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/member-list`)
+      .get(`${apiVersion}/organizations/${organization?.id}/member-list`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully member list response:', res.body);
@@ -73,7 +74,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/member-roles`)
+      .patch(`${apiVersion}/organizations/${organization?.id}/member-roles`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         user_id: memberId,
@@ -94,7 +95,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/member-roles`)
+      .patch(`${apiVersion}/organizations/${organization?.id}/member-roles`)
       .set('Authorization', `Bearer ${memberOrganizationToken}`)
       .send({
         user_id: memberId,
@@ -116,7 +117,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/member/${memberId}`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/member/${memberId}`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully delete member response:', res.body);
@@ -133,7 +134,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/member/${memberId}`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/member/${memberId}`)
       .set('Authorization', `Bearer ${memberOrganizationToken}`)
 
     console.log('failed delete member response:', res.body);
@@ -151,7 +152,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/leave`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/leave`)
       .set('Authorization', `Bearer ${memberOrganizationToken}`)
 
     console.log('successfully delete leave response:', res.body);
@@ -168,7 +169,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/leave`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/leave`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('failed delete leave response:', res.body);
@@ -186,7 +187,7 @@ describe('Organization Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/member-list`)
+      .get(`${apiVersion}/organizations/${organization?.id}/member-list`)
       .set('Authorization', `Bearer ${memberOrganizationToken}`)
 
     console.log('failed member list response:', res.body);

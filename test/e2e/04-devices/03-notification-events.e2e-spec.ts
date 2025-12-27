@@ -11,10 +11,13 @@ import { Organization, Device, NotificationEvent } from 'src/common/entities';
 
 describe('Device Controller (e2e)', () => {
   let app: NestExpressApplication;
-  const organizationName = "organization_test2";
-  const deviceName = "Device test organization_test2";
-  const adminOrganizationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
-  const nonMemberOrganizationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1ZDM1NTk1LWZkOGMtNGYzZi1hZDkzLTAyM2E3Yzc5OWJkNCIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTYyMDR9.6CqphO9VNASFn_GW55FQxogQh-E_Fx8926sWadootFY';
+  const apiVersion = '/api/v1';
+  const organizationName = 'organization_test2';
+  const deviceName = 'Device test organization_test2';
+  const adminOrganizationToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
+  const nonMemberOrganizationToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI1ZDM1NTk1LWZkOGMtNGYzZi1hZDkzLTAyM2E3Yzc5OWJkNCIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTYyMDR9.6CqphO9VNASFn_GW55FQxogQh-E_Fx8926sWadootFY';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -59,7 +62,9 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .post(`/organizations/${organization?.id}/devices/${device?.id}/notification-events`)
+      .post(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events`,
+      )
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         pin: 'V1',
@@ -67,8 +72,8 @@ describe('Device Controller (e2e)', () => {
         message: 'suhu telalu panas, nyalakan penyiraman',
         comparison_type: '>',
         threshold_value: '50',
-        is_active: true
-      })
+        is_active: true,
+      });
 
     console.log('successfully create notification events response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -88,7 +93,9 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .post(`/organizations/${organization?.id}/devices/${device?.id}/notification-events`)
+      .post(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events`,
+      )
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
       .send({
         pin: 'V1',
@@ -96,8 +103,8 @@ describe('Device Controller (e2e)', () => {
         message: 'suhu telalu panas, nyalakan penyiraman',
         comparison_type: '>',
         threshold_value: '50',
-        is_active: true
-      })
+        is_active: true,
+      });
 
     console.log('failed create notification events response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -118,10 +125,15 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/notification-events/list`)
-      .set('Authorization', `Bearer ${adminOrganizationToken}`)
+      .get(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events/list`,
+      )
+      .set('Authorization', `Bearer ${adminOrganizationToken}`);
 
-    console.log('successfully get notification events list response:', res.body);
+    console.log(
+      'successfully get notification events list response:',
+      res.body,
+    );
     expect(res.body.message).toBeDefined();
     expect(res.status).toBeGreaterThanOrEqual(200);
     expect(res.status).toBeLessThan(300);
@@ -139,8 +151,10 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/notification-events/list`)
-      .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
+      .get(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events/list`,
+      )
+      .set('Authorization', `Bearer ${nonMemberOrganizationToken}`);
 
     console.log('failed get notification events list response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -159,14 +173,18 @@ describe('Device Controller (e2e)', () => {
       select: { id: true },
       where: { name: deviceName, organization_id: organization?.id },
     });
-    const notificationEvent = await dataSource.getRepository(NotificationEvent).findOne({
-      select: { id: true },
-      where: { device_id: device?.id },
-    })
+    const notificationEvent = await dataSource
+      .getRepository(NotificationEvent)
+      .findOne({
+        select: { id: true },
+        where: { device_id: device?.id },
+      });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`)
-      .set('Authorization', `Bearer ${adminOrganizationToken}`)
+      .get(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`,
+      )
+      .set('Authorization', `Bearer ${adminOrganizationToken}`);
 
     console.log('successfully get notification events response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -184,14 +202,18 @@ describe('Device Controller (e2e)', () => {
       select: { id: true },
       where: { name: deviceName, organization_id: organization?.id },
     });
-    const notificationEvent = await dataSource.getRepository(NotificationEvent).findOne({
-      select: { id: true },
-      where: { device_id: device?.id },
-    })
+    const notificationEvent = await dataSource
+      .getRepository(NotificationEvent)
+      .findOne({
+        select: { id: true },
+        where: { device_id: device?.id },
+      });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`)
-      .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
+      .get(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`,
+      )
+      .set('Authorization', `Bearer ${nonMemberOrganizationToken}`);
 
     console.log('failed get notification events response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -210,13 +232,17 @@ describe('Device Controller (e2e)', () => {
       select: { id: true },
       where: { name: deviceName, organization_id: organization?.id },
     });
-    const notificationEvent = await dataSource.getRepository(NotificationEvent).findOne({
-      select: { id: true },
-      where: { device_id: device?.id },
-    })
+    const notificationEvent = await dataSource
+      .getRepository(NotificationEvent)
+      .findOne({
+        select: { id: true },
+        where: { device_id: device?.id },
+      });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`)
+      .patch(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`,
+      )
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         pin: 'V1',
@@ -224,8 +250,8 @@ describe('Device Controller (e2e)', () => {
         message: 'suhu telalu panas, nyalakan penyiraman',
         comparison_type: '>',
         threshold_value: '100',
-        is_active: true
-      })
+        is_active: true,
+      });
 
     console.log('successfully update notification events response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -243,13 +269,17 @@ describe('Device Controller (e2e)', () => {
       select: { id: true },
       where: { name: deviceName, organization_id: organization?.id },
     });
-    const notificationEvent = await dataSource.getRepository(NotificationEvent).findOne({
-      select: { id: true },
-      where: { device_id: device?.id },
-    })
+    const notificationEvent = await dataSource
+      .getRepository(NotificationEvent)
+      .findOne({
+        select: { id: true },
+        where: { device_id: device?.id },
+      });
 
     const res = await request(app.getHttpServer())
-      .patch(`/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`)
+      .patch(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`,
+      )
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
       .send({
         pin: 'V1',
@@ -257,8 +287,8 @@ describe('Device Controller (e2e)', () => {
         message: 'suhu telalu panas, nyalakan penyiraman',
         comparison_type: '>',
         threshold_value: '100',
-        is_active: true
-      })
+        is_active: true,
+      });
 
     console.log('failed update notification events response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -277,14 +307,18 @@ describe('Device Controller (e2e)', () => {
       select: { id: true },
       where: { name: deviceName, organization_id: organization?.id },
     });
-    const notificationEvent = await dataSource.getRepository(NotificationEvent).findOne({
-      select: { id: true },
-      where: { device_id: device?.id },
-    })
+    const notificationEvent = await dataSource
+      .getRepository(NotificationEvent)
+      .findOne({
+        select: { id: true },
+        where: { device_id: device?.id },
+      });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`)
-      .set('Authorization', `Bearer ${adminOrganizationToken}`)
+      .delete(
+        `${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/notification-events/${notificationEvent?.id}`,
+      )
+      .set('Authorization', `Bearer ${adminOrganizationToken}`);
 
     console.log('successfully delete notification events response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -302,14 +336,18 @@ describe('Device Controller (e2e)', () => {
       select: { id: true },
       where: { name: deviceName, organization_id: organization?.id },
     });
-    const notificationEvent = await dataSource.getRepository(NotificationEvent).findOne({
-      select: { id: true },
-      where: { device_id: device?.id },
-    })
+    const notificationEvent = await dataSource
+      .getRepository(NotificationEvent)
+      .findOne({
+        select: { id: true },
+        where: { device_id: device?.id },
+      });
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/devices/false-devices-id/notification-events/${notificationEvent?.id}`)
-      .set('Authorization', `Bearer ${adminOrganizationToken}`)
+      .delete(
+        `${apiVersion}/organizations/${organization?.id}/devices/false-devices-id/notification-events/${notificationEvent?.id}`,
+      )
+      .set('Authorization', `Bearer ${adminOrganizationToken}`);
 
     console.log('failed delete notification events response:', res.body);
     expect(res.body.message).toBeDefined();

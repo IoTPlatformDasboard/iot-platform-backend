@@ -11,6 +11,7 @@ import { User } from 'src/common/entities';
 
 describe('Auth Controller (e2e)', () => {
   let app: NestExpressApplication;
+  const apiVersion = '/api/v1';
   const email = 'userTest2@example.com';
 
   beforeAll(async () => {
@@ -46,7 +47,7 @@ describe('Auth Controller (e2e)', () => {
   // Forgot Password
   it('successfully forgot password', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/forgot-password')
+      .post(`${apiVersion}/auth/forgot-password`)
       .send({
         email,
       });
@@ -59,7 +60,7 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed forgot password', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/forgot-password')
+      .post(`${apiVersion}/auth/forgot-password`)
       .send({
         email: 'test@example.co',
       });
@@ -83,7 +84,7 @@ describe('Auth Controller (e2e)', () => {
       .getRawOne();
 
     const res = await request(app.getHttpServer())
-      .get(`/auth/reset-password/${resetPasswordToken.token}`);
+      .get(`${apiVersion}/auth/reset-password/${resetPasswordToken.token}`);
 
     console.log('successfully get reset password response:', res.text);
     expect(res.status).toBeGreaterThanOrEqual(200);
@@ -92,7 +93,7 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed get reset password', async () => {
     const res = await request(app.getHttpServer())
-      .get('/auth/reset-password/invalid_token');
+      .get(`${apiVersion}/auth/reset-password/invalid_token`);
 
     console.log('failed get reset password response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -113,7 +114,7 @@ describe('Auth Controller (e2e)', () => {
       .getRawOne();
 
     const res = await request(app.getHttpServer())
-      .post('/auth/reset-password')
+      .post(`${apiVersion}/auth/reset-password`)
       .send({ 
         token: resetPasswordToken?.token,
         new_password: '12345678',
@@ -126,7 +127,7 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed post reset password', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/reset-password')
+      .post(`${apiVersion}/auth/reset-password`)
       .send({ 
         token: 'invalid_token',
         new_password: '12345678',

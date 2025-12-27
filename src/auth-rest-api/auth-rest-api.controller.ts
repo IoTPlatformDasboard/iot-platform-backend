@@ -1,5 +1,25 @@
-import { Controller, Logger, UseGuards, Req, Res, Body, Query, Post, Get, Patch, UseInterceptors } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiOkResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Logger,
+  UseGuards,
+  Req,
+  Res,
+  Body,
+  Query,
+  Post,
+  Get,
+  Patch,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiConsumes,
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Request, Response } from 'express';
 import { AuthRestApiService } from './auth-rest-api.service';
@@ -12,23 +32,25 @@ import { UploadPictureInterceptorFactory } from '../common/interceptors/upload-p
 
 @ApiTags('Auth')
 @UseInterceptors(CacheInterceptor)
-@Controller('auth')
+@Controller('api/v1/auth')
 export class AuthRestApiController {
   private readonly logger = new Logger(AuthRestApiController.name);
-  constructor(
-    private readonly authRestApiService: AuthRestApiService, 
-  ) {}
+  constructor(private readonly authRestApiService: AuthRestApiService) {}
 
   @ApiOperation({ summary: 'Register' })
   @ApiOkResponse({
     schema: {
       example: {
-        message: "Check your email and spam folder for a link to verify your account.",
-      }
-    }
+        message:
+          'Check your email and spam folder for a link to verify your account.',
+      },
+    },
   })
   @Post('register')
-  async postRegister(@Req() request: Request, @Body() postRegisterDto: dto.PostRegisterDto) {
+  async postRegister(
+    @Req() request: Request,
+    @Body() postRegisterDto: dto.PostRegisterDto,
+  ) {
     this.logger.log(`There is a register request`);
     return this.authRestApiService.postRegister(request, postRegisterDto);
   }
@@ -68,19 +90,20 @@ export class AuthRestApiController {
   }
 
   @ApiOperation({ summary: 'Login' })
-  @ApiOkResponse({ 
-    schema: { 
-      example: { 
-        message: 'User logged in successfully.', 
-        data: { 
-          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZmMmQ2ZTE2LTdiMTAtNDZhOC04ZWI2LWY0YzliMTg0YWM4OSIsImlhdCI6MTc0NDIyNDI2NX0.E2IqEjRvdHK26vN32vLauC1amGT0evpee_sBPGw25G0', 
-          user: { 
+  @ApiOkResponse({
+    schema: {
+      example: {
+        message: 'User logged in successfully.',
+        data: {
+          token:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZmMmQ2ZTE2LTdiMTAtNDZhOC04ZWI2LWY0YzliMTg0YWM4OSIsImlhdCI6MTc0NDIyNDI2NX0.E2IqEjRvdHK26vN32vLauC1amGT0evpee_sBPGw25G0',
+          user: {
             id: 'c353a34c-2aad-44c4-8830-796360c16d2e',
-            role : 'Admin System',
-          } 
-        } 
-      } 
-    }  
+            role: 'Admin System',
+          },
+        },
+      },
+    },
   })
   @Post('login')
   async postLogin(@Body() postLoginDto: dto.PostLoginDto) {
@@ -92,18 +115,29 @@ export class AuthRestApiController {
   @ApiOkResponse({
     schema: {
       example: {
-        message: 'Check your email and spam folder for a link to reset your password.',
-      }
-    }
+        message:
+          'Check your email and spam folder for a link to reset your password.',
+      },
+    },
   })
   @Post('forgot-password')
-  async postForgotPassword(@Req() request: Request, @Body() PostForgotPasswordDto: dto.PostForgotPasswordDto) {
+  async postForgotPassword(
+    @Req() request: Request,
+    @Body() PostForgotPasswordDto: dto.PostForgotPasswordDto,
+  ) {
     this.logger.log(`There is a forgot password request`);
-    return this.authRestApiService.postForgotPassword(request, PostForgotPasswordDto);
+    return this.authRestApiService.postForgotPassword(
+      request,
+      PostForgotPasswordDto,
+    );
   }
 
   @ApiOperation({ summary: 'Reset password page' })
-  @ApiParam({ name: 'token', type: String, description: 'The reset password token' })
+  @ApiParam({
+    name: 'token',
+    type: String,
+    description: 'The reset password token',
+  })
   @ApiOkResponse({
     content: {
       'text/html': {
@@ -142,16 +176,20 @@ export class AuthRestApiController {
     },
   })
   @Get('reset-password/:token')
-  async getResetPassword(@Req() request: Request, @Res() res: Response,) {
+  async getResetPassword(@Req() request: Request, @Res() res: Response) {
     this.logger.log(`There is a get reset password request`);
-    return this.authRestApiService.getResetPassword(request, request.params.token, res);
+    return this.authRestApiService.getResetPassword(
+      request,
+      request.params.token,
+      res,
+    );
   }
 
   @ApiOperation({ summary: 'Reset password form' })
   @ApiOkResponse({
     content: {
       'text/html': {
-        example:`
+        example: `
           <html lang='id'>
             <head>
               <meta charset='UTF-8' />
@@ -165,12 +203,15 @@ export class AuthRestApiController {
               </div>
             </body>
           </html>
-        `
-      }
-    }
+        `,
+      },
+    },
   })
   @Post('reset-password')
-  async postResetPassword(@Body() resetPasswordDto: dto.PostResetPasswordDto, @Res() res: Response) {
+  async postResetPassword(
+    @Body() resetPasswordDto: dto.PostResetPasswordDto,
+    @Res() res: Response,
+  ) {
     this.logger.log(`There is a post reset password request`);
     return this.authRestApiService.postResetPassword(resetPasswordDto, res);
   }
@@ -188,11 +229,11 @@ export class AuthRestApiController {
             email: 'user@example.com',
             phone_number: '08xx-xxxx-xxxx',
             profile_picture: 'https://example.com/profile-picture.jpg',
-            role: 'Admin System'
-          }
-        }
-      }
-    }
+            role: 'Admin System',
+          },
+        },
+      },
+    },
   })
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.LOCAL_MEMBER)
@@ -201,7 +242,10 @@ export class AuthRestApiController {
     return this.authRestApiService.getProfile(request.user.id);
   }
 
-  @ApiOperation({ summary: 'Update profile username, phone number, and profile picture (regular user minimal role)' })
+  @ApiOperation({
+    summary:
+      'Update profile username, phone number, and profile picture (regular user minimal role)',
+  })
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -210,7 +254,11 @@ export class AuthRestApiController {
       properties: {
         username: { type: 'string', example: 'username' },
         phone_number: { type: 'string', example: '08xxxxxxxxx' },
-        profile_picture: { type: 'string', format: 'binary', description: '(optional)' },
+        profile_picture: {
+          type: 'string',
+          format: 'binary',
+          description: '(optional)',
+        },
       },
     },
   })
@@ -219,26 +267,35 @@ export class AuthRestApiController {
       example: {
         message: 'Profile updated successfully.',
         data: {
-          token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c', 
+          token:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
           user: {
             id: 'c353a34c-2aad-44c4-8830-796360c16d2e',
             username: 'Bill Valentinov',
             email: 'user@example.com',
             phone_number: '08xx-xxxx-xxxx',
             profile_picture: 'https://example.com/profile-picture.jpg',
-            role: 'Admin System'
-          }
-        }
-      }
-    }
+            role: 'Admin System',
+          },
+        },
+      },
+    },
   })
   @Patch('profile')
   @UseGuards(UserRolesGuard)
-  @UserRoles(UserRole.REGULAR_USER)  
+  @UserRoles(UserRole.REGULAR_USER)
   @UseInterceptors(UploadPictureInterceptorFactory('profile_picture'))
-  async patchProfile(@Req() request: AuthenticatedRequest, @Body() patchProfileDto: dto.PatchProfileDto) {
+  async patchProfile(
+    @Req() request: AuthenticatedRequest,
+    @Body() patchProfileDto: dto.PatchProfileDto,
+  ) {
     this.logger.log(`There is an update profile request`);
-    return this.authRestApiService.patchProfile(request, request.user.id, patchProfileDto, request.file?.filename ?? null);
+    return this.authRestApiService.patchProfile(
+      request,
+      request.user.id,
+      patchProfileDto,
+      request.file?.filename ?? null,
+    );
   }
 
   @ApiOperation({ summary: 'Change email (regular user minimal role)' })
@@ -246,16 +303,24 @@ export class AuthRestApiController {
   @ApiOkResponse({
     schema: {
       example: {
-        message: 'Check your email and spam folder for a link to verify your account.',
-      }
-    }
+        message:
+          'Check your email and spam folder for a link to verify your account.',
+      },
+    },
   })
   @Patch('email')
   @UseGuards(UserRolesGuard)
-  @UserRoles(UserRole.REGULAR_USER)  
-  async patchEmail(@Req() request: AuthenticatedRequest, @Body() patchEmailDto: dto.PatchEmailDto) {
+  @UserRoles(UserRole.REGULAR_USER)
+  async patchEmail(
+    @Req() request: AuthenticatedRequest,
+    @Body() patchEmailDto: dto.PatchEmailDto,
+  ) {
     this.logger.log(`There is a change email request`);
-    return this.authRestApiService.patchEmail(request, request.user.id, patchEmailDto);
+    return this.authRestApiService.patchEmail(
+      request,
+      request.user.id,
+      patchEmailDto,
+    );
   }
 
   @ApiOperation({ summary: 'Change password (lokal member minimal role)' })
@@ -264,14 +329,20 @@ export class AuthRestApiController {
     schema: {
       example: {
         message: 'Password changed successfully.',
-      }
-    }
+      },
+    },
   })
   @Patch('password')
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.LOCAL_MEMBER)
-  async patchPassword(@Req() request: AuthenticatedRequest, @Body() patchPasswordDto: dto.PatchPasswordDto) {
+  async patchPassword(
+    @Req() request: AuthenticatedRequest,
+    @Body() patchPasswordDto: dto.PatchPasswordDto,
+  ) {
     this.logger.log(`There is a change password request`);
-    return this.authRestApiService.patchPassword(request.user.id, patchPasswordDto);
+    return this.authRestApiService.patchPassword(
+      request.user.id,
+      patchPasswordDto,
+    );
   }
 }

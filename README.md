@@ -1,10 +1,68 @@
-# IoT Bridge Backend - Research Project
+# IoT Backend Platform (NestJS)
 
-## 📌 Project Overview
+A production-ready IoT backend designed for teams that already have devices,
+but need a clean, secure, and scalable backend foundation.
 
-This backend system is designed to support an IoT platform that enables organizations to manage their users, devices, and data visualization settings. It provides RESTful APIs, integrates with MQTT for IoT device communication, and implements role-based access control for security and flexibility.
+This backend focuses on:
 
-This project was developed as part of a bachelor's thesis in Information Technology.
+- reliable MQTT data ingestion
+- organization-based access control
+- structured device management
+- readiness for multi-client growth
+
+## ❓ The Problem
+
+Many IoT projects can send data from devices,
+but struggle with backend issues such as:
+
+- no clear device ownership
+- lack of role-based access
+- hard-to-extend database structure
+- backend that breaks when users or devices grow
+
+This project addresses those problems at the backend level.
+
+## 👥 Who This Is For
+
+This backend is suitable for:
+
+- IoT startups building MVP or pilot projects
+- hardware teams needing a reliable backend foundation
+- smart farming, smart building, or monitoring systems
+- research projects that must evolve into real deployments
+
+## ✅ What You Get
+
+- NestJS backend with modular structure
+- MQTT broker integration
+- Device registration & data ingestion
+- Organization-based user management
+- Role-based access (Admin, Operator, Viewer)
+- PostgreSQL database schema
+- WebSocket for real-time data
+
+## 🏗️ Architecture Overview
+
+Device
+→ MQTT Broker
+→ NestJS Backend
+→ PostgreSQL
+→ REST API / WebSocket
+
+## ⭐ Why This Backend
+
+- Designed with multi-organization support from day one
+- Clear separation between system admin and organization users
+- Suitable for shared-device platforms
+- Can be used as a service base or extended into a full product
+
+## 📌 Project Status
+
+This project is actively used as:
+
+- a production reference
+- a backend foundation for IoT services
+- a base for client implementations
 
 ## 🚀 Project setup
 
@@ -53,6 +111,7 @@ FIREBASE_SERVICE_ACCOUNT_KEY=your-firebase-service-account-key
 EMAIL_SERVICE_PASSWORD → Do not use your regular Gmail password. Use an App Password from Google.
 
 🔗 How to get an App Password:
+
 1. Go to Google Account Security.
 2. Enable 2-Step Verification (if not already enabled).
 3. Search App passwords, and create an app password.
@@ -85,7 +144,7 @@ ADMIN_SYSTEM_USERNAMES=admin1,admin2,admin3,admin4,admin5
 ADMIN_SYSTEM_PASSWORD=password123
 ```
 
-Remember the password must be at least 6 characters and a maximum of 20. 
+Remember the password must be at least 6 characters and a maximum of 20.
 
 You can only fill in one password for all users and the deafult password is `12345678`.
 
@@ -112,6 +171,42 @@ $ npm run start:prod
 
 #### 🧪 Performance Test
 
+Make sure the following are done before running the tests:
+
+1. Install K6
+   If not already installed, install K6 from https://grafana.com/docs/k6/latest/set-up/install-k6/
+
+2. Run the MQTT Test Service
+   Clone and run this test publisher project with ngrok:
+   https://github.com/iot-bridge-repository/iot-bridge-mqtt-device-data-publish-test
+
+3. Set the MQTT base URL
+   After running with ngrok, export the base URL:
+
+```bash
+$ export MQTT_DEVICE_DATA_PUBLISH_BASE_URL=https://<your-ngrok-url>
+```
+
+4. Set Environment
+   Ensure the .env file has:
+
+```bash
+NODE_ENV=staging
+```
+
+5. Create Test Users
+
+- Admin System
+  Username: adminSystem
+  Password: 12345678
+- Regular User
+  Username: userDummy
+  Password: 12345678
+
+Important: Do not create these adminSystem and userDummy users in production database.
+
+6. Run Tests
+
 ```bash
 # sanity test
 $ K6_WEB_DASHBOARD=true k6 run test/performance/scenarios/sanity.test.js
@@ -120,40 +215,8 @@ $ K6_WEB_DASHBOARD=true k6 run test/performance/scenarios/sanity.test.js
 $ K6_WEB_DASHBOARD=true k6 run test/performance/scenarios/stress.test.js
 ```
 
-Make sure the following are done before running the tests:
-
-1. Install K6
-If not already installed, install K6 from https://grafana.com/docs/k6/latest/set-up/install-k6/
-
-2. Run the MQTT Test Service
-Clone and run this test publisher project with ngrok:
-https://github.com/iot-bridge-repository/iot-bridge-mqtt-device-data-publish-test
-
-3. Set the MQTT base URL
-After running with ngrok, export the base URL:
-
-```bash
-$ export MQTT_DEVICE_DATA_PUBLISH_BASE_URL=https://<your-ngrok-url>
-```
-
-4. Set Environment
-Ensure the .env file has:
-
-```bash
-NODE_ENV=staging
-```
-
-5. Create Test Users
-- Admin System
-Username: adminSystem
-Password: 12345678
-- Regular User
-Username: userDummy
-Password: 12345678
-
-Important: Do not create these adminSystem and userDummy users in production database.
-
-After the test is completed, run the following command to clean the test data from the database:
+7. Cleanup Test Data
+   After the test is completed, run the following command to clean the test data from the database:
 
 ```bash
 $ npx ts-node src/database/scripts/cleanTestData.ts

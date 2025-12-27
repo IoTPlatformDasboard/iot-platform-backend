@@ -11,6 +11,7 @@ import { Organization, Device, WidgetBox } from 'src/common/entities';
 
 describe('Device Controller (e2e)', () => {
   let app: NestExpressApplication;
+  const apiVersion = '/api/v1';
   const organizationName = "organization_test2";
   const deviceName = "Device test organization_test2";
   const adminOrganizationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ1MjQzYWM2LWFiMWItNDk4Yi04NDJmLWI1ZGZiODM0OTIzNiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDc1NTI2NTZ9.f-UwNUVTnw2c2K9sv7K12wrobhIYqvmCeSNqw_MaQsk';
@@ -59,7 +60,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .put(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes`)
+      .put(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
       .send({
         name: 'suhu 2',
@@ -84,7 +85,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .put(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes`)
+      .put(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
       .send({
         name: 'suhu 2',
@@ -110,7 +111,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/list`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/list`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully get widget boxes list response:', res.body);
@@ -131,7 +132,7 @@ describe('Device Controller (e2e)', () => {
     });
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/list`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/list`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
 
     console.log('failed get widget boxes list response:', res.body);
@@ -157,7 +158,7 @@ describe('Device Controller (e2e)', () => {
     })
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully get widget boxes by id response:', res.body);
@@ -182,7 +183,7 @@ describe('Device Controller (e2e)', () => {
     })
 
     const res = await request(app.getHttpServer())
-      .get(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
+      .get(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
 
     console.log('failed get widget boxes by id response:', res.body);
@@ -208,7 +209,7 @@ describe('Device Controller (e2e)', () => {
     })
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
       .set('Authorization', `Bearer ${adminOrganizationToken}`)
 
     console.log('successfully delete widget boxes response:', res.body);
@@ -233,7 +234,7 @@ describe('Device Controller (e2e)', () => {
     })
 
     const res = await request(app.getHttpServer())
-      .delete(`/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
+      .delete(`${apiVersion}/organizations/${organization?.id}/devices/${device?.id}/widget-boxes/${widgetBox?.id}`)
       .set('Authorization', `Bearer ${nonMemberOrganizationToken}`)
 
     console.log('failed delete widget boxes response:', res.body);

@@ -1,5 +1,19 @@
-import { Controller, Logger, Req, UseGuards, Get, Delete, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiOkResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Logger,
+  Req,
+  UseGuards,
+  Get,
+  Delete,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiOkResponse,
+  ApiTags,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { NotificationsRestApiService } from './notifications-rest-api.service';
 import AuthenticatedRequest from '../common/interfaces/authenticated-request.interface';
@@ -10,11 +24,11 @@ import { UserRole } from '../common/entities';
 @ApiTags('Notifications')
 @ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
-@Controller('notifications')
+@Controller('api/v1/notifications')
 export class NotificationsRestApiController {
   private readonly logger = new Logger(NotificationsRestApiController.name);
   constructor(
-    private readonly notificationsRestApiService: NotificationsRestApiService
+    private readonly notificationsRestApiService: NotificationsRestApiService,
   ) {}
 
   @ApiOperation({ summary: 'Get notifications (lokal member minimal role)' })
@@ -24,15 +38,17 @@ export class NotificationsRestApiController {
         message: 'Notifications.',
         data: [
           {
-            id: "15b292bc-2e5f-4d5d-a808-c5c3dd951073",
-            subject: "Pengajuan organisasi baru: POKDAKAN BINTANG ROSELA JAYA 3",
-            message: "User pak Eko mengajukan organisasi: POKDAKAN BINTANG ROSELA JAYA 3",
-            type: "organization_propose",
-            created_at: "2025-04-26T13:21:37.416Z"
+            id: '15b292bc-2e5f-4d5d-a808-c5c3dd951073',
+            subject:
+              'Pengajuan organisasi baru: POKDAKAN BINTANG ROSELA JAYA 3',
+            message:
+              'User pak Eko mengajukan organisasi: POKDAKAN BINTANG ROSELA JAYA 3',
+            type: 'organization_propose',
+            created_at: '2025-04-26T13:21:37.416Z',
           },
-        ]
-      }
-    }
+        ],
+      },
+    },
   })
   @Get('')
   @UseGuards(UserRolesGuard)
@@ -42,30 +58,40 @@ export class NotificationsRestApiController {
     return this.notificationsRestApiService.get(request.user.id);
   }
 
-  @ApiOperation({ summary: 'Delete notification by id (lokal member minimal role)' })
-  @ApiParam({ name: 'notificationId', type: String, description: 'Notification id' })
+  @ApiOperation({
+    summary: 'Delete notification by id (lokal member minimal role)',
+  })
+  @ApiParam({
+    name: 'notificationId',
+    type: String,
+    description: 'Notification id',
+  })
   @ApiOkResponse({
     schema: {
       example: {
         message: 'Successfully delete notification.',
-      }
-    }
+      },
+    },
   })
   @Delete(':notificationId')
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.LOCAL_MEMBER)
   async delete(@Req() request: AuthenticatedRequest) {
     this.logger.log(`There is a request to delete notification by id`);
-    return this.notificationsRestApiService.delete(request.params.notificationId);
+    return this.notificationsRestApiService.delete(
+      request.params.notificationId,
+    );
   }
 
-  @ApiOperation({ summary: 'Delete all notifications (lokal member minimal role)' })
+  @ApiOperation({
+    summary: 'Delete all notifications (lokal member minimal role)',
+  })
   @ApiOkResponse({
     schema: {
       example: {
         message: 'Successfully delete all notifications.',
-      }
-    }
+      },
+    },
   })
   @Delete('')
   @UseGuards(UserRolesGuard)

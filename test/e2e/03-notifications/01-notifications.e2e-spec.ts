@@ -9,7 +9,10 @@ import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 
 describe('Notification Controller (e2e)', () => {
   let app: NestExpressApplication;
-  const userToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjllZWEzMzhkLTJkMDYtNGFhYy04MmMwLTE0ZDU1OThhZTgyZiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDcwOTQ2NTF9.z1IlqHFIVPh0cfnzfQyHpuVfPZcbWr_ttM9fjZr9YBw';
+  const apiVersion = '/api/v1';
+  const userToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjllZWEzMzhkLTJkMDYtNGFhYy04MmMwLTE0ZDU1OThhZTgyZiIsInJvbGUiOiJSZWd1bGFyIFVzZXIiLCJpYXQiOjE3NDcwOTQ2NTF9.z1IlqHFIVPh0cfnzfQyHpuVfPZcbWr_ttM9fjZr9YBw';
+  const notificationId = 'a392c71a-5275-42c4-bcde-dacfa9940864';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -44,8 +47,8 @@ describe('Notification Controller (e2e)', () => {
   // Get notification
   it('successfully notification', async () => {
     const res = await request(app.getHttpServer())
-      .get(`/notifications`)
-      .set('Authorization', `Bearer ${userToken}`)
+      .get(`${apiVersion}/notifications`)
+      .set('Authorization', `Bearer ${userToken}`);
 
     console.log('successfully notification response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -55,8 +58,8 @@ describe('Notification Controller (e2e)', () => {
 
   it('failed notification', async () => {
     const res = await request(app.getHttpServer())
-      .get(`/notifications`)
-      .set('Authorization', `Bearer `)
+      .get(`${apiVersion}/notifications`)
+      .set('Authorization', `Bearer `);
 
     console.log('failed notification response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -67,10 +70,13 @@ describe('Notification Controller (e2e)', () => {
   // Delete specific notification
   it('successfully delete specific notification', async () => {
     const res = await request(app.getHttpServer())
-      .delete(`/notifications/a392c71a-5275-42c4-bcde-dacfa9940864`)
-      .set('Authorization', `Bearer ${userToken}`)
+      .delete(`${apiVersion}/notifications/${notificationId}`)
+      .set('Authorization', `Bearer ${userToken}`);
 
-    console.log('successfully delete specific notification response:', res.body);
+    console.log(
+      'successfully delete specific notification response:',
+      res.body,
+    );
     expect(res.body.message).toBeDefined();
     expect(res.status).toBeGreaterThanOrEqual(200);
     expect(res.status).toBeLessThan(300);
@@ -78,8 +84,8 @@ describe('Notification Controller (e2e)', () => {
 
   it('failed delete specific notification', async () => {
     const res = await request(app.getHttpServer())
-      .delete(`/notifications/a392c71a-5275-42c4-bcde-dacfa99408`)
-      .set('Authorization', `Bearer `)
+      .delete(`${apiVersion}/notifications/${notificationId}`)
+      .set('Authorization', `Bearer `);
 
     console.log('failed delete specific notification response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -90,8 +96,8 @@ describe('Notification Controller (e2e)', () => {
   // Delete all notification
   it('successfully delete all notification', async () => {
     const res = await request(app.getHttpServer())
-      .delete(`/notifications`)
-      .set('Authorization', `Bearer ${userToken}`)
+      .delete(`${apiVersion}/notifications`)
+      .set('Authorization', `Bearer ${userToken}`);
 
     console.log('successfully delete all notification response:', res.body);
     expect(res.body.message).toBeDefined();
@@ -101,8 +107,8 @@ describe('Notification Controller (e2e)', () => {
 
   it('failed delete all notification', async () => {
     const res = await request(app.getHttpServer())
-      .delete(`/notifications`)
-      .set('Authorization', `Bearer `)
+      .delete(`${apiVersion}/notifications`)
+      .set('Authorization', `Bearer `);
 
     console.log('failed delete all notification response:', res.body);
     expect(res.body.message).toBeDefined();

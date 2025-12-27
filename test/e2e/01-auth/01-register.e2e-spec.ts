@@ -11,6 +11,7 @@ import { VerifyEmailToken } from 'src/common/entities';
 
 describe('Auth Controller (e2e)', () => {
   let app: NestExpressApplication;
+  const apiVersion = '/api/v1';
   const email = 'userTest2@example.com';
   const username = 'userTest2';
   const phone_number = '081234567891';
@@ -36,7 +37,9 @@ describe('Auth Controller (e2e)', () => {
     // Filter configuration
     app.useGlobalFilters(new HttpExceptionFilter());
 
-    app.setBaseViewsDir(join(__dirname, '..', '..', '..', 'src', 'common', 'views'));
+    app.setBaseViewsDir(
+      join(__dirname, '..', '..', '..', 'src', 'common', 'views'),
+    );
     app.setViewEngine('hbs');
 
     await app.init();
@@ -49,7 +52,7 @@ describe('Auth Controller (e2e)', () => {
   // Register
   it('successfully register', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/register')
+      .post(`${apiVersion}/auth/register`)
       .send({
         username,
         email,
@@ -65,7 +68,7 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed register', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/register')
+      .post(`${apiVersion}/auth/register`)
       .send({
         username,
         email,
@@ -82,7 +85,7 @@ describe('Auth Controller (e2e)', () => {
   // Login
   it('failed login', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post(`${apiVersion}/auth/login`)
       .send({
         identity: email,
         password,
@@ -97,13 +100,15 @@ describe('Auth Controller (e2e)', () => {
   // Verify email
   it('successfully verify email', async () => {
     const dataSource = app.get(DataSource);
-    const verifyEmailToken = await dataSource.getRepository(VerifyEmailToken).findOne({
-      select: {token: true},
-      where: { email }, 
-    });
+    const verifyEmailToken = await dataSource
+      .getRepository(VerifyEmailToken)
+      .findOne({
+        select: { token: true },
+        where: { email },
+      });
 
     const res = await request(app.getHttpServer())
-      .get(`/auth/verify-email/`)
+      .get(`${apiVersion}/auth/verify-email/`)
       .query({ token: verifyEmailToken?.token });
 
     console.log('successfully verify email response:', res.body);
@@ -113,7 +118,7 @@ describe('Auth Controller (e2e)', () => {
 
   it('failed verify email', async () => {
     const res = await request(app.getHttpServer())
-      .get('/auth/verify-email')
+      .get(`${apiVersion}/auth/verify-email`)
       .query({ token: 'invalid_token' });
 
     console.log('failed verify email response:', res.body);
@@ -125,7 +130,7 @@ describe('Auth Controller (e2e)', () => {
   // Login
   it('successfully login', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post(`${apiVersion}/auth/login`)
       .send({
         identity: email,
         password,
