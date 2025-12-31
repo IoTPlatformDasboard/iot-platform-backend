@@ -20,40 +20,15 @@ export class CreateUsersTable1741505126260 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: 'email',
-            type: 'varchar',
-            length: '255',
-            isUnique: true,
-            isNullable: true,
-          },
-          {
-            name: 'phone_number',
-            type: 'varchar',
-            length: '15',
-            isUnique: true,
-            isNullable: true,
-          },
-          {
             name: 'password',
             type: 'varchar',
             isNullable: false,
           },
           {
-            name: 'profile_picture',
-            type: 'text',
-            isNullable: true,
-          },
-          {
             name: 'role',
             type: 'enum',
-            enum: ['Admin System', 'Regular User', 'Local Member'],
-            default: `'Regular User'`,
-            isNullable: false,
-          },
-          {
-            name: 'is_email_verified',
-            type: 'boolean',
-            default: false,
+            enum: ['Admin', 'Operator', 'Viewer'],
+            default: `'Viewer'`,
             isNullable: false,
           },
           {

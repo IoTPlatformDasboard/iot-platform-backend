@@ -1,69 +1,3 @@
-# IoT Backend Platform (NestJS)
-
-A production-ready IoT backend designed for teams that already have devices,
-but need a clean, secure, and scalable backend foundation.
-
-This backend focuses on:
-
-- reliable MQTT data ingestion
-- organization-based access control
-- structured device management
-- readiness for multi-client growth
-
-## ❓ The Problem
-
-Many IoT projects can send data from devices,
-but struggle with backend issues such as:
-
-- no clear device ownership
-- lack of role-based access
-- hard-to-extend database structure
-- backend that breaks when users or devices grow
-
-This project addresses those problems at the backend level.
-
-## 👥 Who This Is For
-
-This backend is suitable for:
-
-- IoT startups building MVP or pilot projects
-- hardware teams needing a reliable backend foundation
-- smart farming, smart building, or monitoring systems
-- research projects that must evolve into real deployments
-
-## ✅ What You Get
-
-- NestJS backend with modular structure
-- MQTT broker integration
-- Device registration & data ingestion
-- Organization-based user management
-- Role-based access (Admin, Operator, Viewer)
-- PostgreSQL database schema
-- WebSocket for real-time data
-
-## 🏗️ Architecture Overview
-
-Device
-→ MQTT Broker
-→ NestJS Backend
-→ PostgreSQL
-→ REST API / WebSocket
-
-## ⭐ Why This Backend
-
-- Designed with multi-organization support from day one
-- Clear separation between system admin and organization users
-- Suitable for shared-device platforms
-- Can be used as a service base or extended into a full product
-
-## 📌 Project Status
-
-This project is actively used as:
-
-- a production reference
-- a backend foundation for IoT services
-- a base for client implementations
-
 ## 🚀 Project setup
 
 ### 1️⃣ Install dependencies
@@ -80,7 +14,6 @@ Add the following variables to the .env file in the project root:
 
 ```bash
 # 📦 Database config
-DB_TYPE=postgres # must be postgres
 DB_HOST=your-db-host
 DB_PORT=your-db-port
 DB_USERNAME=your-db-username
@@ -138,10 +71,8 @@ If you don't want to add a Admin System user, you can skip this step.
 To add a System Admin user to the database, add the following variables in .env:
 
 ```bash
-ADMIN_SYSTEM_EMAILS=admin1@example.com,admin2@example.com,admin3@example.com,admin4@example.com,admin5@example.com
-ADMIN_SYSTEM_PHONE_NUMBERS=08xxxxxxxx,08xxxxxxxx,08xxxxxxxx,08xxxxxxxx,08xxxxxxxx
-ADMIN_SYSTEM_USERNAMES=admin1,admin2,admin3,admin4,admin5
-ADMIN_SYSTEM_PASSWORD=password123
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=password123
 ```
 
 Remember the password must be at least 6 characters and a maximum of 20.
@@ -151,7 +82,7 @@ You can only fill in one password for all users and the deafult password is `123
 Then run the following command:
 
 ```bash
-$ npx ts-node src/database/scripts/addUsersAdminSystem.ts
+$ npx ts-node src/database/scripts/addAdmin.ts
 ```
 
 ### 6️⃣ Compile and run the project

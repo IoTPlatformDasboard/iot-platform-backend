@@ -2,19 +2,21 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { User, VerifyEmailToken, ResetPasswordToken } from '../common/entities';
+import { User, RefreshToken } from '../common/entities';
 import { AuthRestApiService } from './auth-rest-api.service';
 import { AuthRestApiController } from './auth-rest-api.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, VerifyEmailToken, ResetPasswordToken]),
+    TypeOrmModule.forFeature([User, RefreshToken]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'default_secret'),
-        signOptions: { expiresIn: '30d' }
+      useFactory: (config: ConfigService) => ({
+        secret: config.get('ACCESS_TOKEN_SECRET'),
+        signOptions: {
+          expiresIn: '15m',
+        },
       }),
     }),
   ],

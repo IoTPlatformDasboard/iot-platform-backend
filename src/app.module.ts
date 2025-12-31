@@ -8,11 +8,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthRestApiModule } from './auth-rest-api/auth-rest-api.module';
 import { LoggingMiddleware } from './common/middleware/logging.middleware';
-import { OrganizationsRestApiModule } from './organizations-rest-api/organizations-rest-api.module';
-import { NotificationsRestApiModule } from './notifications-rest-api/notifications-rest-api.module';
-import { DevicesRestApiModule } from './devices-rest-api/devices-rest-api.module';
-import { UsersRestApiModule } from './users-rest-api/users-rest-api.module';
-import { MqttModule } from './mqtt/mqtt.module';
 
 @Module({
   imports: [
@@ -27,19 +22,19 @@ import { MqttModule } from './mqtt/mqtt.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
-          type: configService.get<string>('DB_TYPE') as 'aurora-mysql' | 'postgres' | 'mysql' | 'mariadb' | 'sqlite' | 'oracle' | 'aurora-postgres' | 'better-sqlite3' | 'cockroachdb' | 'sqljs' | 'mongodb' | 'mssql' | 'sap' | 'spanner' | 'cordova' | 'nativescript' | 'react-native' | 'expo' | 'ionics',
+          type: 'postgres',
           host: configService.get<string>('DB_HOST'),
           port: configService.get<number>('DB_PORT') ?? 5432,
           username: configService.get<string>('DB_USERNAME'),
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_NAME'),
-          synchronize: false, 
-          autoLoadEntities: true, 
+          synchronize: false,
+          autoLoadEntities: true,
           logging: true,
           logger: 'advanced-console',
           extra: {
             max: 10,
-          }
+          },
         } as TypeOrmModuleOptions;
       },
     }),
@@ -48,24 +43,19 @@ import { MqttModule } from './mqtt/mqtt.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => [
         {
-          rootPath: configService.get<string>('NODE_ENV') === 'production'
-            ? '/var/www/uploads'
-            : path.resolve(__dirname, '..', 'uploads'),
+          rootPath:
+            configService.get<string>('NODE_ENV') === 'production'
+              ? '/var/www/uploads'
+              : path.resolve(__dirname, '..', 'uploads'),
           serveRoot: '/uploads',
         },
       ],
     }),
     AuthRestApiModule,
-    OrganizationsRestApiModule,
-    NotificationsRestApiModule,
-    DevicesRestApiModule,
-    UsersRestApiModule,
-    MqttModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*');
