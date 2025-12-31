@@ -4,14 +4,21 @@ import {
   Res,
   Body,
   Post,
+  Get,
   UseInterceptors,
   Version,
+  UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Request, Response } from 'express';
 import { AuthRestApiService } from './auth-rest-api.service';
 import * as dto from './dto';
+import AccessTokenPayload from '../common/interfaces/access-token-payload.interface';
+import { UserRoles } from '../common/decorators/user-roles.decorator';
+import { UserRole } from '../common/entities';
+import { UserRolesGuard } from '../common/guards/user-roles.guard';
 
 @ApiTags('Auth')
 @UseInterceptors(CacheInterceptor)
@@ -75,5 +82,68 @@ export class AuthRestApiController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authRestApiService.postLogout(req, res);
+  }
+
+  @ApiOperation({ summary: 'Get profile' })
+  @ApiOkResponse({
+    schema: {
+      example: {
+        message: 'Successfully get profile',
+        user: {
+          username: 'user.username',
+          role: 'user.role',
+        },
+      },
+    },
+  })
+  @Version('1')
+  @UseGuards(UserRolesGuard)
+  @UserRoles(UserRole.VIEWER)
+  @Get('profile')
+  async getProfile(@Req() request: AccessTokenPayload) {
+    return this.authRestApiService.getProfile(request.sub);
+  }
+
+  @ApiOperation({ summary: 'Update username' })
+  @ApiOkResponse({
+    schema: {
+      example: {
+        message: 'Successfully updated username',
+        data: {
+          user: {
+            username: 'new_username',
+          },
+        },
+      },
+    },
+  })
+  @Version('1')
+  @UseGuards(UserRolesGuard)
+  @UserRoles(UserRole.VIEWER)
+  @Patch('username')
+  async patchUsername(
+    @Req() request: AccessTokenPayload,
+    @Body() body: dto.PatchUsernameDto,
+  ) {
+    return this.authRestApiService.patchUsername(request.sub, body);
+  }
+
+  @ApiOperation({ summary: 'Update password' })
+  @ApiOkResponse({
+    schema: {
+      example: {
+        message: 'Successfully updated password',
+      },
+    },
+  })
+  @Version('1')
+  @UseGuards(UserRolesGuard)
+  @UserRoles(UserRole.VIEWER)
+  @Patch('password')
+  async patchPassword(
+    @Req() request: AccessTokenPayload,
+    @Body() body: dto.PatchPasswordDto,
+  ) {
+    return this.authRestApiService.patchPassword(request.sub, body);
   }
 }

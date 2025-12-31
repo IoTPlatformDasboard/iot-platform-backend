@@ -19,6 +19,6 @@ export async function checkToken(
   const decoded = jwtService.verify(token);
 
   // Add id and role to request object
-  const { id, role, type } = decoded;
-  request = Object.assign(request, { id, role, type });
+  const { sub, role, type } = decoded;
+  request = Object.assign(request, { sub, role, type });
 }

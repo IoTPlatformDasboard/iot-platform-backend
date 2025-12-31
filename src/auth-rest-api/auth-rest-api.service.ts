@@ -4,6 +4,7 @@ import {
   Logger,
   NotFoundException,
   BadRequestException,
+  ConflictException,
   InternalServerErrorException,
   HttpException,
 } from '@nestjs/common';
@@ -206,6 +207,10 @@ export class AuthRestApiService {
         device_info: req.headers['user-agent'] ?? 'unknown',
       });
 
+      this.logger.log(
+        `Refresh success: Token refreshed for user ID ${refreshTokenPayload.sub}`,
+      );
+
       // Set new refresh token in cookie
       res.cookie('refresh_token', newRefreshToken, {
         httpOnly: true,
@@ -216,7 +221,7 @@ export class AuthRestApiService {
 
       // Send response
       return {
-        message: 'Token refreshed',
+        message: 'Successfully refreshed token',
         data: {
           access_token: newAccessToken,
         },
@@ -263,6 +268,10 @@ export class AuthRestApiService {
         await this.refreshTokenRepository.save(storedToken);
       }
 
+      this.logger.log(
+        `Logout success: Refresh token revoked for user ID ${payload.sub}`,
+      );
+
       // Clear the refresh token cookie
       res.clearCookie('refresh_token', {
         httpOnly: true,
@@ -273,7 +282,7 @@ export class AuthRestApiService {
 
       // Send response
       return {
-        message: 'Successful logout',
+        message: 'Successfully logout',
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -283,6 +292,152 @@ export class AuthRestApiService {
       this.logger.error(`Logout System Error: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to logout, please try again later',
+      );
+    }
+  }
+
+  async getProfile(id: string) {
+    try {
+      // Check if the user exists
+      const user = await this.userRepository.findOne({
+        select: { username: true, role: true },
+        where: { id },
+      });
+      if (!user) {
+        this.logger.warn(`Get profile failure: User not found, by id: ${id}`);
+        throw new UnauthorizedException('User not found');
+      }
+
+      this.logger.log(
+        `Get profile success: User profile retrieved, by id: ${id}`,
+      );
+      return {
+        message: 'Successfully get profile',
+        data: {
+          user: {
+            username: user.username,
+            role: user.role,
+          },
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Get profile System Error: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to get profile, please try again later',
+      );
+    }
+  }
+
+  async patchUsername(id: string, patchUsernameDto: dto.PatchUsernameDto) {
+    try {
+      // Check if the user exists
+      const existingUser = await this.userRepository.findOne({
+        where: { id },
+      });
+      if (!existingUser) {
+        this.logger.warn(`Patch username failure: User not found by id: ${id}`);
+        throw new UnauthorizedException('User not found');
+      }
+
+      // Check if the new username is different
+      if (existingUser.username !== patchUsernameDto.username) {
+        // Check if the new username is already taken
+        const isUsernameTaken = await this.userRepository.findOne({
+          select: { id: true },
+          where: { username: patchUsernameDto.username },
+        });
+
+        // If taken, throw conflict exception
+        if (isUsernameTaken) {
+          this.logger.warn(
+            `Patch username failure: ${patchUsernameDto.username} already taken`,
+          );
+          throw new ConflictException('Username is already taken');
+        }
+
+        // Update the username
+        existingUser.username = patchUsernameDto.username;
+        await this.userRepository.save(existingUser);
+      }
+
+      this.logger.log(
+        `Patch username success: Username updated for user id: ${id}`,
+      );
+      return {
+        message: 'Successfully updated username',
+        data: {
+          user: {
+            username: existingUser.username,
+          },
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Patch username System Error: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to update username, please try again later',
+      );
+    }
+  }
+
+  async patchPassword(id: string, patchPasswordDto: dto.PatchPasswordDto) {
+    try {
+      // Check if the user exists
+      const user = await this.userRepository.findOne({
+        select: { password: true },
+        where: { id },
+      });
+      if (!user) {
+        this.logger.warn(`Patch password failure: User not found by id: ${id}`);
+        throw new UnauthorizedException('User not found');
+      }
+
+      const { old_password, new_password } = patchPasswordDto;
+
+      // Check if the old password is valid
+      const isPasswordValid = await bcrypt.compare(old_password, user.password);
+      if (!isPasswordValid) {
+        this.logger.warn(
+          `Patch password failure: Incorrect old password by id: ${id}`,
+        );
+        throw new BadRequestException('Incorrect old password');
+      }
+
+      // Update the password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(new_password, salt);
+      await this.userRepository.update(id, { password: hashedPassword });
+
+      this.logger.log(
+        `Patch password success: Password updated for user id: ${id}`,
+      );
+      return {
+        message: 'Successfully updated password',
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Patch password System Error: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to update password, please try again later',
       );
     }
   }
