@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthRestApiModule } from './auth-rest-api/auth-rest-api.module';
 import { LoggingMiddleware } from './common/middleware/logging.middleware';
+import { UsersRestApiModule } from './users-rest-api/users-rest-api.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { LoggingMiddleware } from './common/middleware/logging.middleware';
       ],
     }),
     AuthRestApiModule,
+    UsersRestApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

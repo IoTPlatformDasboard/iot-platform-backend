@@ -42,9 +42,9 @@ export class AuthRestApiController {
   async postLogin(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-    @Body() postLoginDto: dto.PostLoginDto,
+    @Body() body: dto.PostLoginBodyDto,
   ) {
-    return this.authRestApiService.postLogin(req, res, postLoginDto);
+    return this.authRestApiService.postLogin(req, res, body);
   }
 
   @ApiOperation({ summary: 'Refreshed token' })
@@ -123,7 +123,7 @@ export class AuthRestApiController {
   @Patch('username')
   async patchUsername(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PatchUsernameDto,
+    @Body() body: dto.PatchUsernameBodyDto,
   ) {
     return this.authRestApiService.patchUsername(request.sub, body);
   }
@@ -142,7 +142,7 @@ export class AuthRestApiController {
   @Patch('password')
   async patchPassword(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PatchPasswordDto,
+    @Body() body: dto.PatchPasswordBodyDto,
   ) {
     return this.authRestApiService.patchPassword(request.sub, body);
   }

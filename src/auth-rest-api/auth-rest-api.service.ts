@@ -2,7 +2,6 @@ import {
   Injectable,
   UnauthorizedException,
   Logger,
-  NotFoundException,
   BadRequestException,
   ConflictException,
   InternalServerErrorException,
@@ -14,49 +13,40 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { User, RefreshToken } from '../common/entities';
 import * as dto from './dto';
-import { EmailService } from '../common/services/email.service';
+import { User, RefreshToken } from '../common/entities';
 
 @Injectable()
 export class AuthRestApiService {
   private readonly logger = new Logger(AuthRestApiService.name);
-  private readonly emailService: EmailService;
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(RefreshToken)
     private readonly refreshTokenRepository: Repository<RefreshToken>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {
-    this.emailService = new EmailService(this.configService);
-  }
+  ) {}
 
-  async postLogin(req: Request, res: Response, postLoginDto: dto.PostLoginDto) {
+  async postLogin(req: Request, res: Response, body: dto.PostLoginBodyDto) {
     try {
       // Check if the username exists
       const user = await this.userRepository.findOne({
         select: { id: true, password: true, role: true },
-        where: [{ username: postLoginDto.username }],
+        where: [{ username: body.username }],
       });
       if (!user) {
-        this.logger.warn(
-          `Login failure: User ${postLoginDto.username} not found`,
-        );
+        this.logger.warn(`Login failure: User ${body.username} not found`);
         throw new UnauthorizedException('Invalid credentials');
       }
 
       // Check if the password is valid
       const isPasswordValid = await bcrypt.compare(
-        postLoginDto.password,
+        body.password,
         user.password,
       );
       if (!isPasswordValid) {
-        this.logger.warn(
-          `Login failure: Wrong password for ${postLoginDto.username}`,
-        );
+        this.logger.warn(`Login failure: Wrong password for ${body.username}`);
         throw new UnauthorizedException('Invalid credentials');
       }
 
@@ -93,9 +83,7 @@ export class AuthRestApiService {
         device_info: req.headers['user-agent'] ?? 'unknown',
       });
 
-      this.logger.log(
-        `Login success: ${postLoginDto.username} has been logged in`,
-      );
+      this.logger.log(`Login success: ${body.username} has been logged in`);
 
       // Set refresh token in cookie
       res.cookie('refresh_token', refreshToken, {
@@ -335,7 +323,7 @@ export class AuthRestApiService {
     }
   }
 
-  async patchUsername(id: string, patchUsernameDto: dto.PatchUsernameDto) {
+  async patchUsername(id: string, body: dto.PatchUsernameBodyDto) {
     try {
       // Check if the user exists
       const existingUser = await this.userRepository.findOne({
@@ -347,23 +335,23 @@ export class AuthRestApiService {
       }
 
       // Check if the new username is different
-      if (existingUser.username !== patchUsernameDto.username) {
+      if (existingUser.username !== body.username) {
         // Check if the new username is already taken
         const isUsernameTaken = await this.userRepository.findOne({
           select: { id: true },
-          where: { username: patchUsernameDto.username },
+          where: { username: body.username },
         });
 
         // If taken, throw conflict exception
         if (isUsernameTaken) {
           this.logger.warn(
-            `Patch username failure: ${patchUsernameDto.username} already taken`,
+            `Patch username failure: ${body.username} already taken`,
           );
           throw new ConflictException('Username is already taken');
         }
 
         // Update the username
-        existingUser.username = patchUsernameDto.username;
+        existingUser.username = body.username;
         await this.userRepository.save(existingUser);
       }
 
@@ -393,7 +381,7 @@ export class AuthRestApiService {
     }
   }
 
-  async patchPassword(id: string, patchPasswordDto: dto.PatchPasswordDto) {
+  async patchPassword(id: string, body: dto.PatchPasswordBodyDto) {
     try {
       // Check if the user exists
       const user = await this.userRepository.findOne({
@@ -405,7 +393,7 @@ export class AuthRestApiService {
         throw new UnauthorizedException('User not found');
       }
 
-      const { old_password, new_password } = patchPasswordDto;
+      const { old_password, new_password } = body;
 
       // Check if the old password is valid
       const isPasswordValid = await bcrypt.compare(old_password, user.password);
