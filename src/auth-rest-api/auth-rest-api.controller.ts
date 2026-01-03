@@ -10,7 +10,12 @@ import {
   UseGuards,
   Patch,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Request, Response } from 'express';
 import { AuthRestApiService } from './auth-rest-api.service';
@@ -51,7 +56,7 @@ export class AuthRestApiController {
   @ApiOkResponse({
     schema: {
       example: {
-        message: 'Token refreshed',
+        message: 'Successfully refreshed token',
         data: {
           access_token: 'xxxxxx',
         },
@@ -85,6 +90,7 @@ export class AuthRestApiController {
   }
 
   @ApiOperation({ summary: 'Get profile' })
+  @ApiBearerAuth()
   @ApiOkResponse({
     schema: {
       example: {
@@ -105,6 +111,7 @@ export class AuthRestApiController {
   }
 
   @ApiOperation({ summary: 'Update username' })
+  @ApiBearerAuth()
   @ApiOkResponse({
     schema: {
       example: {
@@ -129,6 +136,7 @@ export class AuthRestApiController {
   }
 
   @ApiOperation({ summary: 'Update password' })
+  @ApiBearerAuth()
   @ApiOkResponse({
     schema: {
       example: {

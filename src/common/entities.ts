@@ -62,3 +62,21 @@ export class RefreshToken {
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
+
+@Entity({ name: 'topics' })
+export class Topic {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ type: 'varchar', length: 20, unique: true, nullable: false })
+  name: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string | null;
+
+  @Column({ type: 'varchar', length: 36, unique: true, nullable: false })
+  topic: string;
+
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
+}

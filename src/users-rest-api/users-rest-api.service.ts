@@ -10,8 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import * as dto from './dto';
 import { UserRole, User } from '../common/entities';
+import * as dto from './dto';
 
 @Injectable()
 export class UsersRestApiService {
@@ -77,7 +77,7 @@ export class UsersRestApiService {
       await this.userRepository.save(newUser);
 
       return {
-        message: 'User created successfully',
+        message: 'Successfully create user',
         data: {
           id: newUser.id,
           username: newUser.username,
@@ -170,7 +170,7 @@ export class UsersRestApiService {
       await this.userRepository.update({ id: userId }, { role: body.role });
 
       return {
-        message: 'User role updated successfully',
+        message: 'Successfully update user role',
         data: {
           id: user.id,
           username: user.username,
@@ -214,7 +214,7 @@ export class UsersRestApiService {
       await this.userRepository.delete({ id: userId });
 
       return {
-        message: 'User deleted successfully',
+        message: 'Successfully delete user',
         data: {
           id: user.id,
         },

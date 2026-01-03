@@ -11,7 +11,12 @@ import {
   Version,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { UsersRestApiService } from './users-rest-api.service';
 import { UserRoles } from '../common/decorators/user-roles.decorator';
@@ -21,6 +26,7 @@ import * as dto from './dto';
 import AccessTokenPayload from '../common/interfaces/access-token-payload.interface';
 
 @ApiTags('Users')
+@ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
 @Controller('users')
 export class UsersRestApiController {
@@ -51,7 +57,7 @@ export class UsersRestApiController {
   @ApiOkResponse({
     schema: {
       example: {
-        message: 'User created successfully',
+        message: 'Successfully create user',
         data: {
           id: 'xxxx-xxxx-xxxx-xxxx',
           username: 'username',
@@ -97,11 +103,11 @@ export class UsersRestApiController {
     return this.usersRestApiService.getUserList(query);
   }
 
-  @ApiOperation({ summary: 'Patch user role' })
+  @ApiOperation({ summary: 'Change user role' })
   @ApiOkResponse({
     schema: {
       example: {
-        message: 'User role updated successfully',
+        message: 'Successfully update user role',
         data: {
           id: 'xxxx-xxxx-xxxx-xxxx',
           username: 'username',
@@ -129,7 +135,7 @@ export class UsersRestApiController {
   @ApiOkResponse({
     schema: {
       example: {
-        message: 'User deleted successfully',
+        message: 'Successfully delete user',
       },
     },
   })

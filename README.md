@@ -64,11 +64,11 @@ After configuring the database, run the following command to run the migration:
 $ npx typeorm-ts-node-commonjs migration:run -d src/database/database.config.ts
 ```
 
-### 5️⃣ Run scripts to add Admin System user
+### 5️⃣ Run scripts to add Admin user
 
-If you don't want to add a Admin System user, you can skip this step.
+If you don't want to add a Admin user, you can skip this step.
 
-To add a System Admin user to the database, add the following variables in .env:
+To add a Admin user to the database, add the following variables in .env:
 
 ```bash
 ADMIN_USERNAME=admin

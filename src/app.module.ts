@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { AuthRestApiModule } from './auth-rest-api/auth-rest-api.module';
 import { LoggingMiddleware } from './common/middleware/logging.middleware';
 import { UsersRestApiModule } from './users-rest-api/users-rest-api.module';
+import { TopicsRestApiModule } from './topics-rest-api/topics-rest-api.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { UsersRestApiModule } from './users-rest-api/users-rest-api.module';
     }),
     AuthRestApiModule,
     UsersRestApiModule,
+    TopicsRestApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
