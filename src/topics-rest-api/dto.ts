@@ -4,10 +4,10 @@ import {
   IsString,
   Length,
   Matches,
-  IsEnum,
   IsOptional,
   IsInt,
   Min,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -37,6 +37,11 @@ export class PostPutTopicBodyDto {
     message: 'Topic should not contain spaces',
   })
   topic: string;
+
+  @ApiProperty({ example: 'true', description: 'Is active' })
+  @IsNotEmpty({ message: 'Is active cannot be empty' })
+  @IsBoolean({ message: 'Is active must be a boolean' })
+  is_active: boolean;
 }
 
 export class GetTopicListQueryDto {

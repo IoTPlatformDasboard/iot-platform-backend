@@ -41,6 +41,7 @@ export class TopicsRestApiController {
           name: 'topic_name',
           description: 'This is a description of the topic',
           topic: 'topic',
+          is_active: true,
         },
       },
     },
@@ -64,6 +65,7 @@ export class TopicsRestApiController {
             name: 'topic_name',
             description: 'This is a description of the topic',
             topic: 'topic',
+            is_active: true,
           },
         ],
         meta: {
@@ -92,6 +94,7 @@ export class TopicsRestApiController {
           name: 'topic_name',
           description: 'This is a description of the topic',
           topic: 'topic',
+          is_active: true,
         },
       },
     },

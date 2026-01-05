@@ -44,6 +44,7 @@ export class TopicsRestApiService {
         name: body.name,
         description: body.description,
         topic: body.topic,
+        is_active: body.is_active,
       });
       await this.topicRepository.save(newTopic);
 
@@ -75,7 +76,13 @@ export class TopicsRestApiService {
 
       // Fetch users with pagination
       const [topics, total] = await this.topicRepository.findAndCount({
-        select: { id: true, name: true, description: true, topic: true },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          topic: true,
+          is_active: true,
+        },
         take: limit,
         skip: skip,
         order: { name: 'ASC' },
@@ -132,6 +139,7 @@ export class TopicsRestApiService {
         name: body.name,
         description: body.description,
         topic: body.topic,
+        is_active: body.is_active,
       });
 
       return {

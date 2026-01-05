@@ -69,7 +69,7 @@ export class UsersRestApiController {
   @Version('1')
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
-  @Post('create-user')
+  @Post('')
   async postCreateUser(@Body() body: dto.PostCreateUserBodyDto) {
     return this.usersRestApiService.postCreateUser(body);
   }
@@ -98,7 +98,7 @@ export class UsersRestApiController {
   @Version('1')
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
-  @Get('user-list')
+  @Get('list')
   async getUserList(@Query() query: dto.GetUserListQueryDto) {
     return this.usersRestApiService.getUserList(query);
   }
@@ -119,7 +119,7 @@ export class UsersRestApiController {
   @Version('1')
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
-  @Patch('user-role/:userId')
+  @Patch('role/:userId')
   async patchUserRole(
     @Req() request: AccessTokenPayload,
     @Body() body: dto.PatchUserRoleBodyDto,
