@@ -20,7 +20,7 @@ export class TopicsRestApiService {
     private readonly topicRepository: Repository<Topic>,
   ) {}
 
-  async postTopic(body: dto.PostPutTopicBodyDto) {
+  async post(body: dto.PostPutBodyDto) {
     try {
       // Check if the topic name or topic is already taken
       const existingTopic = await this.topicRepository.findOne({
@@ -31,9 +31,7 @@ export class TopicsRestApiService {
       if (existingTopic) {
         const duplicateField =
           existingTopic.name === body.name ? 'Name' : 'Topic';
-        this.logger.warn(
-          `Post Create Topic failure: ${duplicateField} already taken`,
-        );
+        this.logger.warn(`Post Topic failure: ${duplicateField} already taken`);
 
         throw new ConflictException(`${duplicateField} is already taken`);
       }
@@ -67,7 +65,7 @@ export class TopicsRestApiService {
     }
   }
 
-  async getTopicList(query: dto.GetTopicListQueryDto) {
+  async getTopicList(query: dto.GetListQueryDto) {
     try {
       const { page = 1, limit = 10 } = query;
 
@@ -116,7 +114,7 @@ export class TopicsRestApiService {
     }
   }
 
-  async putTopic(topicId: string, body: dto.PostPutTopicBodyDto) {
+  async put(topicId: string, body: dto.PostPutBodyDto) {
     try {
       // Check if the topic name or topic is already taken
       const existingTopic = await this.topicRepository.findOne({
@@ -127,9 +125,7 @@ export class TopicsRestApiService {
       if (existingTopic && existingTopic.id !== topicId) {
         const duplicateField =
           existingTopic.name === body.name ? 'Name' : 'Topic';
-        this.logger.warn(
-          `Post Create Topic failure: ${duplicateField} already taken`,
-        );
+        this.logger.warn(`Put Topic failure: ${duplicateField} already taken`);
 
         throw new ConflictException(`${duplicateField} is already taken`);
       }
@@ -152,7 +148,7 @@ export class TopicsRestApiService {
       }
 
       this.logger.error(
-        `Put Update Topic System Error: ${error.message}`,
+        `Put Topic System Error: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -161,7 +157,7 @@ export class TopicsRestApiService {
     }
   }
 
-  async deleteTopic(topicId: string) {
+  async delete(topicId: string) {
     try {
       // Check if the topic exists
       const topic = await this.topicRepository.findOne({
@@ -178,9 +174,6 @@ export class TopicsRestApiService {
 
       return {
         message: 'Successfully delete topic',
-        data: {
-          id: topic.id,
-        },
       };
     } catch (error) {
       if (error instanceof HttpException) {

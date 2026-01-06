@@ -24,11 +24,7 @@ export class UsersRestApiService {
     try {
       return {
         message: 'Successfully get role list',
-        data: [
-          { role: UserRole.ADMIN, description: 'Admin' },
-          { role: UserRole.OPERATOR, description: 'Operator' },
-          { role: UserRole.VIEWER, description: 'Viewer' },
-        ],
+        data: Object.values(UserRole),
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -45,7 +41,7 @@ export class UsersRestApiService {
     }
   }
 
-  async postCreateUser(postCreateUserBodyDto: dto.PostCreateUserBodyDto) {
+  async post(postCreateUserBodyDto: dto.PostBodyDto) {
     try {
       // Check if the username is already taken
       const isUsernameTaken = await this.userRepository.findOne({
@@ -54,7 +50,7 @@ export class UsersRestApiService {
       });
       if (isUsernameTaken) {
         this.logger.warn(
-          `Post Create User failure: ${postCreateUserBodyDto.username} already taken`,
+          `Post User failure: ${postCreateUserBodyDto.username} already taken`,
         );
         throw new ConflictException('Username is already taken');
       }
@@ -90,7 +86,7 @@ export class UsersRestApiService {
       }
 
       this.logger.error(
-        `Post Create User System Error: ${error.message}`,
+        `Post User System Error: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -99,7 +95,7 @@ export class UsersRestApiService {
     }
   }
 
-  async getUserList(query: dto.GetUserListQueryDto) {
+  async getList(query: dto.GetListQueryDto) {
     try {
       const { page = 1, limit = 10 } = query;
 
@@ -142,17 +138,11 @@ export class UsersRestApiService {
     }
   }
 
-  async patchUserRole(
-    id: string,
-    userId: string,
-    body: dto.PatchUserRoleBodyDto,
-  ) {
+  async patchRole(id: string, userId: string, body: dto.PatchRoleBodyDto) {
     try {
       // Check if the user not trying to change their own role
       if (id === userId) {
-        this.logger.warn(
-          `Patch User Role failure: Cannot change your own role`,
-        );
+        this.logger.warn(`Patch Role failure: Cannot change your own role`);
         throw new ConflictException('Cannot change your own role');
       }
 
@@ -183,16 +173,16 @@ export class UsersRestApiService {
       }
 
       this.logger.error(
-        `Patch User Role System Error: ${error.message}`,
+        `Patch Role System Error: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
-        'Failed to patch user role, please try again later',
+        'Failed to patch role, please try again later',
       );
     }
   }
 
-  async deleteUser(id: string, userId: string) {
+  async delete(id: string, userId: string) {
     try {
       // Check if the user not trying to delete themselves
       if (id === userId) {
@@ -215,9 +205,6 @@ export class UsersRestApiService {
 
       return {
         message: 'Successfully delete user',
-        data: {
-          id: user.id,
-        },
       };
     } catch (error) {
       if (error instanceof HttpException) {

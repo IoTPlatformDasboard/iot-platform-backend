@@ -12,7 +12,7 @@ import {
 import { Type } from 'class-transformer';
 import { UserRole } from '../common/entities';
 
-export class PostCreateUserBodyDto {
+export class PostBodyDto {
   @ApiProperty({ example: 'username', description: 'User username' })
   @IsNotEmpty({ message: 'Username cannot be empty' })
   @IsString({ message: 'Username must be a string' })
@@ -40,7 +40,7 @@ export class PostCreateUserBodyDto {
   role: UserRole;
 }
 
-export class GetUserListQueryDto {
+export class GetListQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -54,7 +54,7 @@ export class GetUserListQueryDto {
   limit?: number = 10;
 }
 
-export class PatchUserRoleBodyDto {
+export class PatchRoleBodyDto {
   @ApiProperty({
     example: UserRole.OPERATOR,
     description: 'Role for the member (Admin, Operator, or Viewer)',

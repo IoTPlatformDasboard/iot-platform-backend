@@ -20,37 +20,18 @@ DB_USERNAME=your-db-username
 DB_PASSWORD=your-db-password
 DB_NAME=your-db-name
 
-# 🔐 JWT Configuration
-JWT_SECRET=your-jwt-secret-key
+# 🔑 JWT Configuration
+ACCESS_TOKEN_SECRET=your-access-token-secret
+REFRESH_TOKEN_SECRET=your-refresh-token-secret
 
 # 🌍 Application Environment
 NODE_ENV=development  # Choose "development", "staging", or "production" to set the desired mode, but by default it is set to "development"
-
-# ✉️ Email Configuration
-EMAIL_SERVICE_ADDRESS=your-email@gmail.com
-EMAIL_SERVICE_PASSWORD=your-app-password  # Use an App Password from Gmail
 
 # 📡 MQTT Configuration
 MQTT_BROKER_URL=mqtt://your-broker-url:your-broker-port
 MQTT_BROKER_USERNAME=your-broker-username
 MQTT_BROKER_PASSWORD=your-broker-password
-
-# 🔥Firebase Configuration
-FIREBASE_PROJECT_ID=your-firebase-project-id
-FIREBASE_SERVICE_ACCOUNT_KEY=your-firebase-service-account-key
-
 ```
-
-EMAIL_SERVICE_PASSWORD → Do not use your regular Gmail password. Use an App Password from Google.
-
-🔗 How to get an App Password:
-
-1. Go to Google Account Security.
-2. Enable 2-Step Verification (if not already enabled).
-3. Search App passwords, and create an app password.
-4. Use the password for EMAIL_SERVICE_PASSWORD.
-
-FIREBASE_SERVICE_ACCOUNT_KEY → Get the Firebase service account key from the Firebase Console then create a firebase folder in the project root and place the service account key there.
 
 ### 3️⃣ Create database
 
@@ -77,7 +58,7 @@ ADMIN_PASSWORD=password123
 
 Remember the password must be at least 6 characters and a maximum of 20.
 
-You can only fill in one password for all users and the deafult password is `12345678`.
+You can only enter one password for all users and the default username is `admin` and the password is `admin123`.
 
 Then run the following command:
 
@@ -97,103 +78,3 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
-
-### 7️⃣ Test
-
-#### 🧪 Performance Test
-
-Make sure the following are done before running the tests:
-
-1. Install K6
-   If not already installed, install K6 from https://grafana.com/docs/k6/latest/set-up/install-k6/
-
-2. Run the MQTT Test Service
-   Clone and run this test publisher project with ngrok:
-   https://github.com/iot-bridge-repository/iot-bridge-mqtt-device-data-publish-test
-
-3. Set the MQTT base URL
-   After running with ngrok, export the base URL:
-
-```bash
-$ export MQTT_DEVICE_DATA_PUBLISH_BASE_URL=https://<your-ngrok-url>
-```
-
-4. Set Environment
-   Ensure the .env file has:
-
-```bash
-NODE_ENV=staging
-```
-
-5. Create Test Users
-
-- Admin System
-  Username: adminSystem
-  Password: 12345678
-- Regular User
-  Username: userDummy
-  Password: 12345678
-
-Important: Do not create these adminSystem and userDummy users in production database.
-
-6. Run Tests
-
-```bash
-# sanity test
-$ K6_WEB_DASHBOARD=true k6 run test/performance/scenarios/sanity.test.js
-
-# stress test
-$ K6_WEB_DASHBOARD=true k6 run test/performance/scenarios/stress.test.js
-```
-
-7. Cleanup Test Data
-   After the test is completed, run the following command to clean the test data from the database:
-
-```bash
-$ npx ts-node src/database/scripts/cleanTestData.ts
-```
-
-## 📖 Websocket and MQTT Documentation
-
-### 1️⃣ 📡 WebSocket
-
-#### 🔸 Connection URL: `ws://localhost:3001`
-
-#### 🔸 Subscription Topic Format:
-
-```json
-{
-  "type": "subscribe",
-  "topic": "device-id/${deviceId}/pin/${pin}"
-}
-```
-
-#### 🔸 Data Obtained Format:
-
-```json
-{
-  "data": {
-    "deviceId": "{deviceId}",
-    "pin": "V1",
-    "value": 23.5,
-    "time": "2025-05-27T12:00:00Z"
-  }
-}
-```
-
-this is the data format obtained from websocket.
-
-### 2️⃣ 🛰️ MQTT
-
-#### 🔸 Topic: `auth-code/{authCode}`
-
-#### 🔸 Payload Format:
-
-```json
-{
-  "V1": 23.5,
-  "V2": 23.5
-}
-```
-
-This format is used to send data to the MQTT broker.

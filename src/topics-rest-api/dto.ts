@@ -9,13 +9,12 @@ import {
   Min,
   IsBoolean,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 
-export class PostPutTopicBodyDto {
+export class PostPutBodyDto {
   @ApiProperty({ example: 'topic_name', description: 'Topic name' })
   @IsNotEmpty({ message: 'Topic name cannot be empty' })
   @IsString({ message: 'Topic name must be a string' })
-  @Length(3, 20, { message: 'Topic name must be between 3 and 20 characters' })
+  @Length(3, 50, { message: 'Topic name must be between 3 and 50 characters' })
   name: string;
 
   @ApiProperty({
@@ -32,7 +31,7 @@ export class PostPutTopicBodyDto {
   @ApiProperty({ example: 'topic', description: 'Topic' })
   @IsNotEmpty({ message: 'Topic cannot be empty' })
   @IsString({ message: 'Topic must be a string' })
-  @Length(3, 20, { message: 'Topic must be between 3 and 20 characters' })
+  @Length(3, 50, { message: 'Topic must be between 3 and 50 characters' })
   @Matches(/^\S*$/, {
     message: 'Topic should not contain spaces',
   })
@@ -44,15 +43,13 @@ export class PostPutTopicBodyDto {
   is_active: boolean;
 }
 
-export class GetTopicListQueryDto {
+export class GetListQueryDto {
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   page?: number = 1;
 
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   limit?: number = 10;

@@ -50,8 +50,8 @@ export class TopicsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.OPERATOR)
   @Post('')
-  async postRefresh(@Body() body: dto.PostPutTopicBodyDto) {
-    return this.topicsRestApiService.postTopic(body);
+  async post(@Body() body: dto.PostPutBodyDto) {
+    return this.topicsRestApiService.post(body);
   }
 
   @ApiOperation({ summary: 'Get topic list' })
@@ -81,7 +81,7 @@ export class TopicsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.VIEWER)
   @Get('topic-list')
-  async getTopicList(@Query() query: dto.GetTopicListQueryDto) {
+  async getTopicList(@Query() query: dto.GetListQueryDto) {
     return this.topicsRestApiService.getTopicList(query);
   }
 
@@ -103,11 +103,11 @@ export class TopicsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.OPERATOR)
   @Put(':topicId')
-  async putUpdateTopic(
+  async put(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PostPutTopicBodyDto,
+    @Body() body: dto.PostPutBodyDto,
   ) {
-    return this.topicsRestApiService.putTopic(request.params.topicId, body);
+    return this.topicsRestApiService.put(request.params.topicId, body);
   }
 
   @ApiOperation({ summary: 'Delete topic' })
@@ -122,7 +122,7 @@ export class TopicsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.OPERATOR)
   @Delete(':topicId')
-  async deleteTopic(@Req() request: AccessTokenPayload) {
-    return this.topicsRestApiService.deleteTopic(request.params.topicId);
+  async delete(@Req() request: AccessTokenPayload) {
+    return this.topicsRestApiService.delete(request.params.topicId);
   }
 }

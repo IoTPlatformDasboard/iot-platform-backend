@@ -10,6 +10,7 @@ import { AuthRestApiModule } from './auth-rest-api/auth-rest-api.module';
 import { LoggingMiddleware } from './common/middleware/logging.middleware';
 import { UsersRestApiModule } from './users-rest-api/users-rest-api.module';
 import { TopicsRestApiModule } from './topics-rest-api/topics-rest-api.module';
+import { WidgetsRestApiModule } from './widgets-rest-api/widgets-rest-api.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { TopicsRestApiModule } from './topics-rest-api/topics-rest-api.module';
     AuthRestApiModule,
     UsersRestApiModule,
     TopicsRestApiModule,
+    WidgetsRestApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

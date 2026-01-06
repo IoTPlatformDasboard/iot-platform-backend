@@ -37,11 +37,7 @@ export class UsersRestApiController {
     schema: {
       example: {
         message: 'Successfully get role list',
-        data: [
-          { role: 'ADMIN', description: 'Admin' },
-          { role: 'OPERATOR', description: 'Operator' },
-          { role: 'VIEWER', description: 'Viewer' },
-        ],
+        data: ['Admin', 'Operator', 'Viewer'],
       },
     },
   })
@@ -70,8 +66,8 @@ export class UsersRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
   @Post('')
-  async postCreateUser(@Body() body: dto.PostCreateUserBodyDto) {
-    return this.usersRestApiService.postCreateUser(body);
+  async post(@Body() body: dto.PostBodyDto) {
+    return this.usersRestApiService.post(body);
   }
 
   @ApiOperation({ summary: 'Get user list' })
@@ -99,8 +95,8 @@ export class UsersRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
   @Get('list')
-  async getUserList(@Query() query: dto.GetUserListQueryDto) {
-    return this.usersRestApiService.getUserList(query);
+  async getList(@Query() query: dto.GetListQueryDto) {
+    return this.usersRestApiService.getList(query);
   }
 
   @ApiOperation({ summary: 'Change user role' })
@@ -120,11 +116,11 @@ export class UsersRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
   @Patch('role/:userId')
-  async patchUserRole(
+  async patchRole(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PatchUserRoleBodyDto,
+    @Body() body: dto.PatchRoleBodyDto,
   ) {
-    return this.usersRestApiService.patchUserRole(
+    return this.usersRestApiService.patchRole(
       request.sub,
       request.params.userId,
       body,
@@ -143,10 +139,7 @@ export class UsersRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
   @Delete(':userId')
-  async deleteUser(@Req() request: AccessTokenPayload) {
-    return this.usersRestApiService.deleteUser(
-      request.sub,
-      request.params.userId,
-    );
+  async delete(@Req() request: AccessTokenPayload) {
+    return this.usersRestApiService.delete(request.sub, request.params.userId);
   }
 }
