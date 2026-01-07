@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
-import { UserRole, User } from '../entities/user.entity';
+import { User, UserRole } from '../../common/entities/user.entity';
 import AppDataSource from '../database.config';
 
 const addAdmin = async (dataSource: DataSource) => {

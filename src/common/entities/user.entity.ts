@@ -3,12 +3,14 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { RefreshToken } from './refresh-token.entity';
 
 export enum UserRole {
-  ADMIN = 'Admin',
-  OPERATOR = 'Operator',
-  VIEWER = 'Viewer',
+  ADMIN = 'ADMIN',
+  OPERATOR = 'OPERATOR',
+  VIEWER = 'VIEWER',
 }
 
 @Entity({ name: 'users' })
@@ -27,4 +29,7 @@ export class User {
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
+
+  @OneToMany(() => RefreshToken, (refresh_token) => refresh_token.user)
+  refresh_tokens: RefreshToken[];
 }

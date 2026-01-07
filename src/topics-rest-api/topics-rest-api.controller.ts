@@ -19,11 +19,13 @@ import {
 } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { TopicsRestApiService } from './topics-rest-api.service';
-import * as dto from './dto';
-import AccessTokenPayload from '../common/interfaces/access-token-payload.interface';
+import { CreateTopicBodyDto } from './dto/create-topic.dto';
+import { UpdateTopicDto } from './dto/update-topic.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
+import { AccessTokenPayload } from '../common/interfaces/access-token-payload.interface';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
 import { UserRoles } from '../common/decorators/user-roles.decorator';
-import { UserRole } from '../common/entities';
+import { UserRole } from '../common/entities/user.entity';
 
 @ApiTags('Topics')
 @ApiBearerAuth()
@@ -50,7 +52,7 @@ export class TopicsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.OPERATOR)
   @Post('')
-  async post(@Body() body: dto.PostPutBodyDto) {
+  async post(@Body() body: CreateTopicBodyDto) {
     return this.topicsRestApiService.post(body);
   }
 
@@ -81,7 +83,7 @@ export class TopicsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.VIEWER)
   @Get('topic-list')
-  async getTopicList(@Query() query: dto.GetListQueryDto) {
+  async getTopicList(@Query() query: PaginationQueryDto) {
     return this.topicsRestApiService.getTopicList(query);
   }
 
@@ -103,10 +105,7 @@ export class TopicsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.OPERATOR)
   @Put(':topicId')
-  async put(
-    @Req() request: AccessTokenPayload,
-    @Body() body: dto.PostPutBodyDto,
-  ) {
+  async put(@Req() request: AccessTokenPayload, @Body() body: UpdateTopicDto) {
     return this.topicsRestApiService.put(request.params.topicId, body);
   }
 

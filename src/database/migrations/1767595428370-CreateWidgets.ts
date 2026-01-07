@@ -21,8 +21,8 @@ export class CreateWidgets1767595428370 implements MigrationInterface {
           {
             name: 'type',
             type: 'enum',
-            enum: ['line_chart', 'gauge', 'board'],
-            default: `'board'`,
+            enum: ['LINE_CHART', 'GAUGE', 'BOARD'],
+            default: `'BOARD'`,
             isNullable: false,
           },
           {

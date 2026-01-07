@@ -18,12 +18,12 @@ import {
 } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { WidgetsRestApiService } from './widgets-rest-api.service';
-
-import * as dto from './dto';
+import { CreateWidgetBodyDto } from './dto/create-widget.dto';
+import { UpdateWidgetBodyDto } from './dto/update-widget.dto';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
 import { UserRoles } from '../common/decorators/user-roles.decorator';
-import { UserRole } from '../common/entities';
-import AccessTokenPayload from '../common/interfaces/access-token-payload.interface';
+import { UserRole } from '../common/entities/user.entity';
+import { AccessTokenPayload } from '../common/interfaces/access-token-payload.interface';
 
 @ApiTags('Widgets')
 @ApiBearerAuth()
@@ -58,7 +58,10 @@ export class WidgetsRestApiController {
           id: 'xxxx-xxxx-xxxx-xxxx',
           title: 'widget_title',
           type: 'BOARD',
-          data_source: {},
+          data_source: {
+            topic: 'topic',
+            key: 'key',
+          },
           config: {},
         },
       },
@@ -68,7 +71,7 @@ export class WidgetsRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.OPERATOR)
   @Post('')
-  async post(@Body() body: dto.PostBodyDto) {
+  async post(@Body() body: CreateWidgetBodyDto) {
     return this.widgetsRestApiService.post(body);
   }
 
@@ -81,8 +84,11 @@ export class WidgetsRestApiController {
           {
             id: 'xxxx-xxxx-xxxx-xxxx',
             title: 'widget_title',
-            type: 'BOARD',
-            data_source: {},
+            type: 'board',
+            data_source: {
+              topic: 'topic',
+              key: 'key',
+            },
             config: {},
           },
         ],
@@ -105,8 +111,11 @@ export class WidgetsRestApiController {
         data: {
           id: 'xxxx-xxxx-xxxx-xxxx',
           title: 'updated_widget_title',
-          type: 'BOARD',
-          data_source: {},
+          type: 'board',
+          data_source: {
+            topic: 'topic',
+            key: 'key',
+          },
           config: {},
         },
       },
@@ -118,7 +127,7 @@ export class WidgetsRestApiController {
   @Put(':widgetId')
   async put(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PutBodyDto,
+    @Body() body: UpdateWidgetBodyDto,
   ) {
     return this.widgetsRestApiService.put(request.params.widgetId, body);
   }

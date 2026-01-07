@@ -14,8 +14,11 @@ import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import * as dto from './dto';
-import { User, RefreshToken } from '../common/entities';
+import { User } from '../common/entities/user.entity';
+import { RefreshToken } from '../common/entities/refresh-token.entity';
+import { LoginBodyDto } from './dto/login.dto';
+import { UpdateUsernameBodyDto } from './dto/update-username.dto';
+import { UpdatePasswordBodyDto } from './dto/update-password.dto';
 
 @Injectable()
 export class AuthRestApiService {
@@ -28,7 +31,7 @@ export class AuthRestApiService {
     private readonly configService: ConfigService,
   ) {}
 
-  async postLogin(req: Request, res: Response, body: dto.PostLoginBodyDto) {
+  async postLogin(req: Request, res: Response, body: LoginBodyDto) {
     try {
       // Check if the username exists
       const user = await this.userRepository.findOne({
@@ -323,7 +326,7 @@ export class AuthRestApiService {
     }
   }
 
-  async patchUsername(id: string, body: dto.PatchUsernameBodyDto) {
+  async patchUsername(id: string, body: UpdateUsernameBodyDto) {
     try {
       // Check if the user exists
       const existingUser = await this.userRepository.findOne({
@@ -381,7 +384,7 @@ export class AuthRestApiService {
     }
   }
 
-  async patchPassword(id: string, body: dto.PatchPasswordBodyDto) {
+  async patchPassword(id: string, body: UpdatePasswordBodyDto) {
     try {
       // Check if the user exists
       const user = await this.userRepository.findOne({

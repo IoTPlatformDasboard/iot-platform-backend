@@ -27,8 +27,8 @@ export class CreateUsers1741505126260 implements MigrationInterface {
           {
             name: 'role',
             type: 'enum',
-            enum: ['Admin', 'Operator', 'Viewer'],
-            default: `'Viewer'`,
+            enum: ['ADMIN', 'OPERATOR', 'VIEWER'],
+            default: `'VIEWER'`,
             isNullable: false,
           },
           {

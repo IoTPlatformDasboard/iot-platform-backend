@@ -10,8 +10,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { UserRole, User } from '../common/entities';
-import * as dto from './dto';
+import { UserRole, User } from '../common/entities/user.entity';
+import { CreateUserBodyDto } from './dto/create-user.dto';
+import { UpdateUserRoleBodyDto } from './dto/update-user-role.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class UsersRestApiService {
@@ -41,7 +43,7 @@ export class UsersRestApiService {
     }
   }
 
-  async post(postCreateUserBodyDto: dto.PostBodyDto) {
+  async post(postCreateUserBodyDto: CreateUserBodyDto) {
     try {
       // Check if the username is already taken
       const isUsernameTaken = await this.userRepository.findOne({
@@ -95,7 +97,7 @@ export class UsersRestApiService {
     }
   }
 
-  async getList(query: dto.GetListQueryDto) {
+  async getList(query: PaginationQueryDto) {
     try {
       const { page = 1, limit = 10 } = query;
 
@@ -138,7 +140,7 @@ export class UsersRestApiService {
     }
   }
 
-  async patchRole(id: string, userId: string, body: dto.PatchRoleBodyDto) {
+  async patchRole(id: string, userId: string, body: UpdateUserRoleBodyDto) {
     try {
       // Check if the user not trying to change their own role
       if (id === userId) {

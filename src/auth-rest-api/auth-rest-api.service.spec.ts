@@ -7,7 +7,8 @@ import {
   UnauthorizedException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { User, RefreshToken } from '../common/entities';
+import { User } from '../common/entities/user.entity';
+import { RefreshToken } from '../common/entities/refresh-token.entity';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 

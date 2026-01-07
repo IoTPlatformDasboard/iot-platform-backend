@@ -19,11 +19,13 @@ import {
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Request, Response } from 'express';
 import { AuthRestApiService } from './auth-rest-api.service';
-import * as dto from './dto';
-import AccessTokenPayload from '../common/interfaces/access-token-payload.interface';
+import { AccessTokenPayload } from '../common/interfaces/access-token-payload.interface';
 import { UserRoles } from '../common/decorators/user-roles.decorator';
-import { UserRole } from '../common/entities';
+import { UserRole } from '../common/entities/user.entity';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
+import { LoginBodyDto } from './dto/login.dto';
+import { UpdateUsernameBodyDto } from './dto/update-username.dto';
+import { UpdatePasswordBodyDto } from './dto/update-password.dto';
 
 @ApiTags('Auth')
 @UseInterceptors(CacheInterceptor)
@@ -47,7 +49,7 @@ export class AuthRestApiController {
   async postLogin(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-    @Body() body: dto.PostLoginBodyDto,
+    @Body() body: LoginBodyDto,
   ) {
     return this.authRestApiService.postLogin(req, res, body);
   }
@@ -130,7 +132,7 @@ export class AuthRestApiController {
   @Patch('username')
   async patchUsername(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PatchUsernameBodyDto,
+    @Body() body: UpdateUsernameBodyDto,
   ) {
     return this.authRestApiService.patchUsername(request.sub, body);
   }
@@ -150,7 +152,7 @@ export class AuthRestApiController {
   @Patch('password')
   async patchPassword(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PatchPasswordBodyDto,
+    @Body() body: UpdatePasswordBodyDto,
   ) {
     return this.authRestApiService.patchPassword(request.sub, body);
   }

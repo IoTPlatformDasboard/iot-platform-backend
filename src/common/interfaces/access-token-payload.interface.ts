@@ -1,7 +1,7 @@
 import { Request } from 'express';
-import { UserRole } from '../entities';
+import { UserRole } from '../entities/user.entity';
 
-export default interface AccessTokenPayload extends Request {
+export interface AccessTokenPayload extends Request {
   sub: string;
   role: UserRole;
   type: 'access' | 'refresh';

@@ -9,8 +9,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { Topic } from '../common/entities';
-import * as dto from './dto';
+import { Topic } from '../common/entities/topic.entity';
+import { CreateTopicBodyDto } from './dto/create-topic.dto';
+import { UpdateTopicDto } from './dto/update-topic.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class TopicsRestApiService {
@@ -20,7 +22,7 @@ export class TopicsRestApiService {
     private readonly topicRepository: Repository<Topic>,
   ) {}
 
-  async post(body: dto.PostPutBodyDto) {
+  async post(body: CreateTopicBodyDto) {
     try {
       // Check if the topic name or topic is already taken
       const existingTopic = await this.topicRepository.findOne({
@@ -65,7 +67,7 @@ export class TopicsRestApiService {
     }
   }
 
-  async getTopicList(query: dto.GetListQueryDto) {
+  async getTopicList(query: PaginationQueryDto) {
     try {
       const { page = 1, limit = 10 } = query;
 
@@ -114,7 +116,7 @@ export class TopicsRestApiService {
     }
   }
 
-  async put(topicId: string, body: dto.PostPutBodyDto) {
+  async put(topicId: string, body: UpdateTopicDto) {
     try {
       // Check if the topic name or topic is already taken
       const existingTopic = await this.topicRepository.findOne({

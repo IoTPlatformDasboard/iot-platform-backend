@@ -4,13 +4,10 @@ import {
   IsString,
   Length,
   Matches,
-  IsOptional,
-  IsInt,
-  Min,
   IsBoolean,
 } from 'class-validator';
 
-export class PostPutBodyDto {
+export class CreateTopicBodyDto {
   @ApiProperty({ example: 'topic_name', description: 'Topic name' })
   @IsNotEmpty({ message: 'Topic name cannot be empty' })
   @IsString({ message: 'Topic name must be a string' })
@@ -41,16 +38,4 @@ export class PostPutBodyDto {
   @IsNotEmpty({ message: 'Is active cannot be empty' })
   @IsBoolean({ message: 'Is active must be a boolean' })
   is_active: boolean;
-}
-
-export class GetListQueryDto {
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  page?: number = 1;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  limit?: number = 10;
 }

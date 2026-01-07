@@ -20,10 +20,12 @@ import {
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { UsersRestApiService } from './users-rest-api.service';
 import { UserRoles } from '../common/decorators/user-roles.decorator';
-import { UserRole } from '../common/entities';
+import { UserRole } from '../common/entities/user.entity';
 import { UserRolesGuard } from '../common/guards/user-roles.guard';
-import * as dto from './dto';
-import AccessTokenPayload from '../common/interfaces/access-token-payload.interface';
+import { AccessTokenPayload } from '../common/interfaces/access-token-payload.interface';
+import { CreateUserBodyDto } from './dto/create-user.dto';
+import { UpdateUserRoleBodyDto } from './dto/update-user-role.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -66,7 +68,7 @@ export class UsersRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
   @Post('')
-  async post(@Body() body: dto.PostBodyDto) {
+  async post(@Body() body: CreateUserBodyDto) {
     return this.usersRestApiService.post(body);
   }
 
@@ -95,7 +97,7 @@ export class UsersRestApiController {
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.ADMIN)
   @Get('list')
-  async getList(@Query() query: dto.GetListQueryDto) {
+  async getList(@Query() query: PaginationQueryDto) {
     return this.usersRestApiService.getList(query);
   }
 
@@ -118,7 +120,7 @@ export class UsersRestApiController {
   @Patch('role/:userId')
   async patchRole(
     @Req() request: AccessTokenPayload,
-    @Body() body: dto.PatchRoleBodyDto,
+    @Body() body: UpdateUserRoleBodyDto,
   ) {
     return this.usersRestApiService.patchRole(
       request.sub,

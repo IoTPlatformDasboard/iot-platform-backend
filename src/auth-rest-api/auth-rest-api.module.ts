@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { User, RefreshToken } from '../common/entities';
+import { User } from '../common/entities/user.entity';
+import { RefreshToken } from '../common/entities/refresh-token.entity';
 import { AuthRestApiService } from './auth-rest-api.service';
 import { AuthRestApiController } from './auth-rest-api.controller';
 

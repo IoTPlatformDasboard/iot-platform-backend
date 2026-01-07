@@ -10,9 +10,9 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import AccessTokenPayload from '../interfaces/access-token-payload.interface';
+import { AccessTokenPayload } from '../interfaces/access-token-payload.interface';
 import { USER_ROLES_KEY } from '../decorators/user-roles.decorator';
-import { UserRole } from '../entities';
+import { UserRole } from '../entities/user.entity';
 import { checkToken } from '../utils/check-token.util';
 
 @Injectable()

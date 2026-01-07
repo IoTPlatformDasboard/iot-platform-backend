@@ -8,8 +8,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { Widget, WidgetType } from '../common/entities';
-import * as dto from './dto';
+import { Widget, WidgetType } from '../common/entities/widget.entity';
+import { CreateWidgetBodyDto } from './dto/create-widget.dto';
+import { UpdateWidgetBodyDto } from './dto/update-widget.dto';
 
 @Injectable()
 export class WidgetsRestApiService {
@@ -40,7 +41,7 @@ export class WidgetsRestApiService {
     }
   }
 
-  async post(body: dto.PostBodyDto) {
+  async post(body: CreateWidgetBodyDto) {
     try {
       // Create a new widget
       const newWidget = this.widgetRepository.create({
@@ -94,7 +95,7 @@ export class WidgetsRestApiService {
     }
   }
 
-  async put(widgetId: string, body: dto.PutBodyDto) {
+  async put(widgetId: string, body: UpdateWidgetBodyDto) {
     try {
       // Update the widget
       await this.widgetRepository.update(widgetId, {
