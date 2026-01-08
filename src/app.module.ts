@@ -13,6 +13,7 @@ import { TopicsRestApiModule } from './topics-rest-api/topics-rest-api.module';
 import { WidgetsRestApiModule } from './widgets-rest-api/widgets-rest-api.module';
 import { MqttModule } from './mqtt/mqtt.module';
 import { TopicCacheModule } from './topic-cache/topic-cache.module';
+import { WidgetRealTimeDataModule } from './widget-real-time-data/widget-real-time-data.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { TopicCacheModule } from './topic-cache/topic-cache.module';
     WidgetsRestApiModule,
     MqttModule,
     TopicCacheModule,
+    WidgetRealTimeDataModule,
   ],
   controllers: [AppController],
   providers: [AppService],

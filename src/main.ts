@@ -4,6 +4,7 @@ import { ValidationPipe, Logger, VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { WsAdapter } from '@nestjs/platform-ws';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
@@ -65,6 +66,7 @@ async function bootstrap() {
   }
 
   // 7. Execution
+  app.useWebSocketAdapter(new WsAdapter(app));
   await app.startAllMicroservices();
   await app.listen(port);
 
