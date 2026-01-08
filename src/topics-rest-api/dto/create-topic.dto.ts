@@ -11,7 +11,7 @@ export class CreateTopicBodyDto {
   @ApiProperty({ example: 'topic_name', description: 'Topic name' })
   @IsNotEmpty({ message: 'Topic name cannot be empty' })
   @IsString({ message: 'Topic name must be a string' })
-  @Length(3, 50, { message: 'Topic name must be between 3 and 50 characters' })
+  @Length(1, 50, { message: 'Topic name must be between 1 and 50 characters' })
   name: string;
 
   @ApiProperty({
@@ -28,7 +28,7 @@ export class CreateTopicBodyDto {
   @ApiProperty({ example: 'topic', description: 'Topic' })
   @IsNotEmpty({ message: 'Topic cannot be empty' })
   @IsString({ message: 'Topic must be a string' })
-  @Length(3, 50, { message: 'Topic must be between 3 and 50 characters' })
+  @Length(1, 50, { message: 'Topic must be between 1 and 50 characters' })
   @Matches(/^\S*$/, {
     message: 'Topic should not contain spaces',
   })

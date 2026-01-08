@@ -1,10 +1,15 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateTopics1767332789979 implements MigrationInterface {
+export class CreateTelemetry1767766025995 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'topics',
+        name: 'telemetry',
         columns: [
           {
             name: 'id',
@@ -13,28 +18,14 @@ export class CreateTopics1767332789979 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'name',
+            name: 'topic_id',
             type: 'varchar',
-            length: '20',
-            isUnique: true,
+            length: '36',
             isNullable: false,
           },
           {
-            name: 'description',
-            type: 'text',
-            isNullable: true,
-          },
-          {
-            name: 'topic',
-            type: 'varchar',
-            length: '50',
-            isUnique: true,
-            isNullable: false,
-          },
-          {
-            name: 'is_active',
-            type: 'boolean',
-            default: false,
+            name: 'payload',
+            type: 'jsonb',
             isNullable: false,
           },
           {
@@ -46,9 +37,20 @@ export class CreateTopics1767332789979 implements MigrationInterface {
       }),
       true,
     );
+
+    await queryRunner.createForeignKey(
+      'telemetry',
+      new TableForeignKey({
+        columnNames: ['topic_id'],
+        referencedTableName: 'topics',
+        referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('topics');
+    await queryRunner.dropTable('telemetry');
   }
 }

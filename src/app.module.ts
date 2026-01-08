@@ -11,6 +11,8 @@ import { LoggingMiddleware } from './common/middleware/logging.middleware';
 import { UsersRestApiModule } from './users-rest-api/users-rest-api.module';
 import { TopicsRestApiModule } from './topics-rest-api/topics-rest-api.module';
 import { WidgetsRestApiModule } from './widgets-rest-api/widgets-rest-api.module';
+import { MqttModule } from './mqtt/mqtt.module';
+import { TopicCacheModule } from './topic-cache/topic-cache.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { WidgetsRestApiModule } from './widgets-rest-api/widgets-rest-api.module
     UsersRestApiModule,
     TopicsRestApiModule,
     WidgetsRestApiModule,
+    MqttModule,
+    TopicCacheModule,
   ],
   controllers: [AppController],
   providers: [AppService],

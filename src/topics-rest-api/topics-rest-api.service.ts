@@ -13,6 +13,7 @@ import { Topic } from '../common/entities/topic.entity';
 import { CreateTopicBodyDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
+import { TopicCacheService } from 'src/topic-cache/topic-cache.service';
 
 @Injectable()
 export class TopicsRestApiService {
@@ -20,6 +21,7 @@ export class TopicsRestApiService {
   constructor(
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
+    private readonly topicCacheService: TopicCacheService,
   ) {}
 
   async post(body: CreateTopicBodyDto) {
@@ -47,6 +49,11 @@ export class TopicsRestApiService {
         is_active: body.is_active,
       });
       await this.topicRepository.save(newTopic);
+
+      // Add topic to cache
+      if (body.is_active) {
+        this.topicCacheService.add(newTopic.topic, newTopic.id);
+      }
 
       return {
         message: 'Successfully create topic',
@@ -118,17 +125,29 @@ export class TopicsRestApiService {
 
   async put(topicId: string, body: UpdateTopicDto) {
     try {
-      // Check if the topic name or topic is already taken
+      // Check if the topic exists
       const existingTopic = await this.topicRepository.findOne({
+        select: { id: true },
+        where: { id: topicId },
+      });
+      if (!existingTopic) {
+        this.logger.warn(
+          `Failed to update topic: Topic not found by id: ${topicId}`,
+        );
+        throw new NotFoundException('Topic not found');
+      }
+
+      // Check if the topic name or topic is already taken
+      const duplicateTopic = await this.topicRepository.findOne({
         select: { id: true, name: true, topic: true },
         where: [{ name: body.name }, { topic: body.topic }],
       });
-
-      if (existingTopic && existingTopic.id !== topicId) {
+      if (duplicateTopic && duplicateTopic.id !== topicId) {
         const duplicateField =
-          existingTopic.name === body.name ? 'Name' : 'Topic';
-        this.logger.warn(`Put Topic failure: ${duplicateField} already taken`);
-
+          duplicateTopic.name === body.name ? 'Name' : 'Topic';
+        this.logger.warn(
+          `Failed to update topic: ${duplicateField} already taken`,
+        );
         throw new ConflictException(`${duplicateField} is already taken`);
       }
 
@@ -140,9 +159,15 @@ export class TopicsRestApiService {
         is_active: body.is_active,
       });
 
+      // Update topic in cache
+      this.topicCacheService.remove(body.topic);
+      if (body.is_active) {
+        this.topicCacheService.add(body.topic, topicId);
+      }
+
       return {
         message: 'Successfully update topic',
-        data: { ...existingTopic, ...body },
+        data: body,
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -150,7 +175,7 @@ export class TopicsRestApiService {
       }
 
       this.logger.error(
-        `Put Topic System Error: ${error.message}`,
+        `Failed to update topic: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -173,6 +198,9 @@ export class TopicsRestApiService {
 
       // Delete the topic
       await this.topicRepository.delete({ id: topicId });
+
+      // Remove topic from cache
+      this.topicCacheService.remove(topic.topic);
 
       return {
         message: 'Successfully delete topic',
