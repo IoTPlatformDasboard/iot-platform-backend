@@ -76,7 +76,7 @@ export class TopicsRestApiService {
     }
   }
 
-  async getTopicList(query: PaginationQueryDto) {
+  async getList(query: PaginationQueryDto) {
     try {
       const { page = 1, limit = 10 } = query;
 
@@ -218,6 +218,31 @@ export class TopicsRestApiService {
       );
       throw new InternalServerErrorException(
         'Failed to delete topic, please try again later',
+      );
+    }
+  }
+
+  async getLookup() {
+    try {
+      const topics = await this.topicRepository.find({
+        select: { topic: true },
+        order: { topic: 'ASC' },
+      });
+      return {
+        message: 'Successfully get topic lookup',
+        data: topics.map((item) => item.topic),
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(
+        `Failed to get topic lookup: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to get topic lookup, please try again later',
       );
     }
   }

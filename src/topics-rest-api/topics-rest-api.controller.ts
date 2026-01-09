@@ -82,9 +82,9 @@ export class TopicsRestApiController {
   @Version('1')
   @UseGuards(UserRolesGuard)
   @UserRoles(UserRole.VIEWER)
-  @Get('topic-list')
-  async getTopicList(@Query() query: PaginationQueryDto) {
-    return this.topicsRestApiService.getTopicList(query);
+  @Get('list')
+  async getList(@Query() query: PaginationQueryDto) {
+    return this.topicsRestApiService.getList(query);
   }
 
   @ApiOperation({ summary: 'Update topic' })
@@ -123,5 +123,22 @@ export class TopicsRestApiController {
   @Delete(':topicId')
   async delete(@Req() request: AccessTokenPayload) {
     return this.topicsRestApiService.delete(request.params.topicId);
+  }
+
+  @ApiOperation({ summary: 'Get topic lookup' })
+  @ApiOkResponse({
+    schema: {
+      example: {
+        message: 'Successfully get topic lookup',
+        data: [],
+      },
+    },
+  })
+  @Version('1')
+  @UseGuards(UserRolesGuard)
+  @UserRoles(UserRole.OPERATOR)
+  @Get('lookup')
+  async getLookup() {
+    return this.topicsRestApiService.getLookup();
   }
 }
