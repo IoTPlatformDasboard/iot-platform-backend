@@ -1,6 +1,7 @@
 import { WebSocketGateway } from '@nestjs/websockets';
 import { WebSocket } from 'ws';
 import { WidgetRealTimeDataService } from './widget-real-time-data.service';
+import { RealTimeDataMessageDto } from './dto/real-time-data.dto';
 
 @WebSocketGateway({ path: '/ws/widget-real-time-data' })
 export class WidgetRealTimeDataGateway {
@@ -8,41 +9,63 @@ export class WidgetRealTimeDataGateway {
     private readonly widgetRealTimeDataService: WidgetRealTimeDataService,
   ) {}
 
+  private isValidDataMessage(data: any): data is RealTimeDataMessageDto {
+    return (
+      typeof data?.topic === 'string' &&
+      data.topic.length > 0 &&
+      typeof data?.key === 'string' &&
+      data.key.length > 0
+    );
+  }
+
   handleConnection(client: WebSocket) {
     this.widgetRealTimeDataService.register(client);
 
     client.on('message', (raw: Buffer | string) => {
       try {
+        // check if message is JSON
         const payload = JSON.parse(
           typeof raw === 'string' ? raw : raw.toString(),
         );
 
-        if (!payload.event || !payload.data) {
-          throw new Error('Invalid payload structure');
+        // checking event
+        if (
+          payload?.event !== 'subscribe' &&
+          payload?.event !== 'unsubscribe'
+        ) {
+          client.send(
+            JSON.stringify({
+              event: 'error',
+              message: 'Invalid event',
+            }),
+          );
+          return;
         }
 
-        switch (payload.event) {
-          case 'subscribe':
-            this.widgetRealTimeDataService.subscribe(client, payload);
-            break;
+        // checking data structure
+        if (!this.isValidDataMessage(payload.data)) {
+          client.send(
+            JSON.stringify({
+              event: 'error',
+              message: 'Invalid data structure',
+            }),
+          );
+          return;
+        }
 
-          case 'unsubscribe':
-            this.widgetRealTimeDataService.unsubscribe(client, payload);
-            break;
+        // subscribe or unsubscribe event
+        if (payload.event === 'subscribe') {
+          this.widgetRealTimeDataService.subscribe(client, payload.data);
+        }
 
-          default:
-            client.send(
-              JSON.stringify({
-                event: 'error',
-                message: 'Unknown event',
-              }),
-            );
+        if (payload.event === 'unsubscribe') {
+          this.widgetRealTimeDataService.unsubscribe(client, payload.data);
         }
       } catch (error) {
         client.send(
           JSON.stringify({
             event: 'error',
-            message: 'Invalid JSON payload',
+            message: 'Invalid JSON payload message',
           }),
         );
       }

@@ -17,6 +17,8 @@ export class MqttService {
   ) {}
 
   async handleMqttPayload(topic: string, payload: any) {
+    this.logger.log(`Received message from topic: ${topic}`);
+
     // Validate topic
     const topicId = this.topicCacheService.getId(topic);
     if (!topicId) {
@@ -53,7 +55,7 @@ export class MqttService {
 
     if (!isAllNumbers) {
       this.logger.warn(
-        `Ignored message: Payload values must be numeric (number or string-number)`,
+        `Ignored message with invalid payload values: ${JSON.stringify(payload)}`,
       );
       return;
     }
@@ -61,11 +63,10 @@ export class MqttService {
     // Publish to widget real-time data
     const payloadKeys = Object.keys(payload);
     for (const key of payloadKeys) {
-      console.log('ASW 2', payloadKeys, key, payload);
       this.widgetRealTimeDataService.publish(topic, key, payload[key]);
     }
 
-    // Save to database
+    // Save payload to database
     const id = uuidv4();
     const newTelemetry = this.telemetryRepository.create({
       id,

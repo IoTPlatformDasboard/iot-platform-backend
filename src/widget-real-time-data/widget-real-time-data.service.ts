@@ -1,13 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { WebSocket } from 'ws';
-import { SubscribeRealTimeDataMessageDto } from './dto/subscribe-real-time-data.dto';
-import { UnsubscribeRealTimeDataMessageDto } from './dto/unsubscribe-real-time-data.dto';
+import { RealTimeDataMessageDto } from './dto/real-time-data.dto';
 
 @Injectable()
 export class WidgetRealTimeDataService {
+  private readonly logger = new Logger(WidgetRealTimeDataService.name);
   private readonly clients = new Map<WebSocket, Set<string>>();
 
+  private buildChannel(topic: string, key: string): string {
+    return `${topic}:${key}`;
+  }
+
   register(client: WebSocket) {
+    this.logger.debug('There is a new client connected');
+
     this.clients.set(client, new Set());
 
     client.on('close', () => {
@@ -20,23 +26,26 @@ export class WidgetRealTimeDataService {
   }
 
   unregister(client: WebSocket) {
+    this.logger.debug('There is a client disconnected');
     this.clients.delete(client);
   }
 
-  subscribe(client: WebSocket, message: SubscribeRealTimeDataMessageDto) {
-    const channel = this.buildChannel(message.data.topic, message.data.key);
+  subscribe(client: WebSocket, data: RealTimeDataMessageDto) {
+    this.logger.debug('There is a client subscribed');
+    const channel = this.buildChannel(data.topic, data.key);
 
     this.clients.get(client)?.add(channel);
   }
 
-  unsubscribe(client: WebSocket, message: UnsubscribeRealTimeDataMessageDto) {
-    const channel = this.buildChannel(message.data.topic, message.data.key);
+  unsubscribe(client: WebSocket, data: RealTimeDataMessageDto) {
+    this.logger.debug('There is a client unsubscribed');
+    const channel = this.buildChannel(data.topic, data.key);
 
     this.clients.get(client)?.delete(channel);
   }
 
   publish(topic: string, key: string, value: any) {
-    console.log('ASW', topic, key, value);
+    this.logger.debug('Publish message');
     const channel = this.buildChannel(topic, key);
 
     for (const [client, channels] of this.clients) {
@@ -58,9 +67,5 @@ export class WidgetRealTimeDataService {
         }),
       );
     }
-  }
-
-  private buildChannel(topic: string, key: string): string {
-    return `${topic}:${key}`;
   }
 }
