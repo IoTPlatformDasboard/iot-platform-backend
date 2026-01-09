@@ -13,8 +13,10 @@ export class FcmService {
   private tokenExpiry: number = 0;
 
   constructor(private readonly configService: ConfigService) {
-    this.projectId = this.configService.get<string>('FIREBASE_PROJECT_ID') ?? '';
-    this.serviceAccountKey = this.configService.get<string>('FIREBASE_SERVICE_ACCOUNT_KEY') ?? '';
+    this.projectId =
+      this.configService.get<string>('FIREBASE_PROJECT_ID') ?? '';
+    this.serviceAccountKey =
+      this.configService.get<string>('FIREBASE_SERVICE_ACCOUNT_KEY') ?? '';
   }
 
   private async getAccessToken(): Promise<string> {
@@ -26,7 +28,14 @@ export class FcmService {
 
     // Create a new GoogleAuth instance and get a new access token
     const auth = new GoogleAuth({
-      keyFile: path.join(__dirname, '..', '..', '..', 'firebase', `${this.serviceAccountKey}`),
+      keyFile: path.join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'firebase',
+        `${this.serviceAccountKey}`,
+      ),
       scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
     });
     const client = await auth.getClient();
@@ -37,10 +46,15 @@ export class FcmService {
     return this.accessToken;
   }
 
-  async sendMobileNotification(userId: string, title: string, body: string, data?: Record<string, any>): Promise<void> {
+  async sendFirebaseNotification(
+    userId: string,
+    title: string,
+    body: string,
+    data?: Record<string, any>,
+  ): Promise<void> {
     try {
       const token = await this.getAccessToken();
-      const response = await axios.post(
+      await axios.post(
         `https://fcm.googleapis.com/v1/projects/${this.projectId}/messages:send`,
         {
           message: {
@@ -56,10 +70,11 @@ export class FcmService {
           },
         },
       );
-
-      this.logger.log(`Successfully sent FCM notification to user: ${userId}`, `Response: ${JSON.stringify(response.data)}`);
     } catch (error) {
-      this.logger.error(`❌ Failed to send notification to user with id ${userId}.`, error);
+      this.logger.error(
+        `Failed to send firebase notification to user with id ${userId}.`,
+        error,
+      );
     }
   }
 }

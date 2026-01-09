@@ -41,7 +41,7 @@ export class UserRolesGuard implements CanActivate {
 
       if (type !== 'access') {
         this.logger.warn(
-          `User roles guard: User with role ${role} tried to access ${context.getHandler().name} using a ${type} token`,
+          `User with role ${role} tried to access ${context.getHandler().name} using a ${type} token`,
         );
         throw new UnauthorizedException('Invalid token type');
       }
@@ -58,7 +58,7 @@ export class UserRolesGuard implements CanActivate {
       );
       if (!hasAccess) {
         this.logger.warn(
-          `User roles guard: User with role ${role} tried to access ${context.getHandler().name} without sufficient permissions`,
+          `User with role ${role} tried to access ${context.getHandler().name} without sufficient permissions`,
         );
         throw new UnauthorizedException(
           `Insufficient role permissions, only user with minimum role ${requiredRole} can access this resource`,
@@ -66,7 +66,7 @@ export class UserRolesGuard implements CanActivate {
       }
       return true;
     } catch (error) {
-      this.logger.warn(`User roles guard: Authentication failed: ${error}`);
+      this.logger.warn(`Authentication failed: ${error}`);
 
       if (error instanceof HttpException || error?.status || error?.response)
         throw error;

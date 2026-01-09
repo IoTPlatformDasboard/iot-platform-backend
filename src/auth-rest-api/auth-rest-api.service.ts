@@ -39,7 +39,7 @@ export class AuthRestApiService {
         where: [{ username: body.username }],
       });
       if (!user) {
-        this.logger.warn(`Login failure: User ${body.username} not found`);
+        this.logger.warn(`Failed to login: User ${body.username} not found`);
         throw new UnauthorizedException('Invalid credentials');
       }
 
@@ -49,7 +49,9 @@ export class AuthRestApiService {
         user.password,
       );
       if (!isPasswordValid) {
-        this.logger.warn(`Login failure: Wrong password for ${body.username}`);
+        this.logger.warn(
+          `Failed to login: Wrong password for ${body.username}`,
+        );
         throw new UnauthorizedException('Invalid credentials');
       }
 
@@ -86,8 +88,6 @@ export class AuthRestApiService {
         device_info: req.headers['user-agent'] ?? 'unknown',
       });
 
-      this.logger.log(`Login success: ${body.username} has been logged in`);
-
       // Set refresh token in cookie
       res.cookie('refresh_token', refreshToken, {
         httpOnly: true,
@@ -109,7 +109,7 @@ export class AuthRestApiService {
         throw error;
       }
 
-      this.logger.error(`Login System Error: ${error.message}`, error.stack);
+      this.logger.error(`Failed to login: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to login, please try again later',
       );
@@ -121,7 +121,9 @@ export class AuthRestApiService {
       // Check if the refresh token exists
       const refreshToken = req.cookies['refresh_token'];
       if (!refreshToken) {
-        this.logger.warn(`Refresh failure: Refresh token not found in cookies`);
+        this.logger.warn(
+          `Failed to refresh token: Refresh token not found in cookies`,
+        );
         throw new UnauthorizedException('Refresh token not found');
       }
 
@@ -134,7 +136,9 @@ export class AuthRestApiService {
         !refreshTokenPayload.jti ||
         refreshTokenPayload.type !== 'refresh'
       ) {
-        this.logger.warn(`Refresh failure: Refresh token payload invalid`);
+        this.logger.warn(
+          `Failed to refresh token: Refresh token payload invalid`,
+        );
         throw new UnauthorizedException('Invalid refresh token');
       }
 
@@ -143,7 +147,7 @@ export class AuthRestApiService {
         where: { id: refreshTokenPayload.jti },
       });
       if (!storedRefreshToken || storedRefreshToken.revoked_at) {
-        this.logger.warn(`Refresh failure: Refresh token revoked`);
+        this.logger.warn(`Failed to refresh token: Refresh token revoked`);
         throw new UnauthorizedException('Refresh token revoked');
       }
 
@@ -153,7 +157,9 @@ export class AuthRestApiService {
         storedRefreshToken.token_hash,
       );
       if (!isRefeshTokenValid) {
-        this.logger.warn(`Refresh failure: Refresh token invalid to compare`);
+        this.logger.warn(
+          `Failed to refresh token: Refresh token invalid to compare`,
+        );
         throw new UnauthorizedException('Invalid refresh token');
       }
 
@@ -198,10 +204,6 @@ export class AuthRestApiService {
         device_info: req.headers['user-agent'] ?? 'unknown',
       });
 
-      this.logger.log(
-        `Refresh success: Token refreshed for user ID ${refreshTokenPayload.sub}`,
-      );
-
       // Set new refresh token in cookie
       res.cookie('refresh_token', newRefreshToken, {
         httpOnly: true,
@@ -222,7 +224,10 @@ export class AuthRestApiService {
         throw error;
       }
 
-      this.logger.error(`Refresh System Error: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to refresh token: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         'Failed to refresh, please try again later',
       );
@@ -245,7 +250,7 @@ export class AuthRestApiService {
       });
       if (!payload.sub || !payload.jti || payload.type !== 'refresh') {
         this.logger.warn(
-          `Logout failure: Refresh token payload invalid payload`,
+          `Failed to logout: Refresh token payload invalid payload`,
         );
         throw new UnauthorizedException('Invalid refresh token');
       }
@@ -258,10 +263,6 @@ export class AuthRestApiService {
         storedToken.revoked_at = new Date();
         await this.refreshTokenRepository.save(storedToken);
       }
-
-      this.logger.log(
-        `Logout success: Refresh token revoked for user ID ${payload.sub}`,
-      );
 
       // Clear the refresh token cookie
       res.clearCookie('refresh_token', {
@@ -280,7 +281,7 @@ export class AuthRestApiService {
         throw error;
       }
 
-      this.logger.error(`Logout System Error: ${error.message}`, error.stack);
+      this.logger.error(`Failed to logout: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to logout, please try again later',
       );
@@ -295,13 +296,10 @@ export class AuthRestApiService {
         where: { id },
       });
       if (!user) {
-        this.logger.warn(`Get profile failure: User not found, by id: ${id}`);
+        this.logger.warn(`Failed to get profile: User not found, by id: ${id}`);
         throw new UnauthorizedException('User not found');
       }
 
-      this.logger.log(
-        `Get profile success: User profile retrieved, by id: ${id}`,
-      );
       return {
         message: 'Successfully get profile',
         data: {
@@ -316,10 +314,7 @@ export class AuthRestApiService {
         throw error;
       }
 
-      this.logger.error(
-        `Get profile System Error: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to get profile: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to get profile, please try again later',
       );
@@ -333,7 +328,9 @@ export class AuthRestApiService {
         where: { id },
       });
       if (!existingUser) {
-        this.logger.warn(`Patch username failure: User not found by id: ${id}`);
+        this.logger.warn(
+          `Failed to update username: User not found by id: ${id}`,
+        );
         throw new UnauthorizedException('User not found');
       }
 
@@ -348,7 +345,7 @@ export class AuthRestApiService {
         // If taken, throw conflict exception
         if (isUsernameTaken) {
           this.logger.warn(
-            `Patch username failure: ${body.username} already taken`,
+            `Failed to update username: ${body.username} already taken`,
           );
           throw new ConflictException('Username is already taken');
         }
@@ -358,9 +355,6 @@ export class AuthRestApiService {
         await this.userRepository.save(existingUser);
       }
 
-      this.logger.log(
-        `Patch username success: Username updated for user id: ${id}`,
-      );
       return {
         message: 'Successfully updated username',
         data: {
@@ -375,7 +369,7 @@ export class AuthRestApiService {
       }
 
       this.logger.error(
-        `Patch username System Error: ${error.message}`,
+        `Failed to update username: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -392,7 +386,9 @@ export class AuthRestApiService {
         where: { id },
       });
       if (!user) {
-        this.logger.warn(`Patch password failure: User not found by id: ${id}`);
+        this.logger.warn(
+          `Failed to update password: User not found by id: ${id}`,
+        );
         throw new UnauthorizedException('User not found');
       }
 
@@ -402,7 +398,7 @@ export class AuthRestApiService {
       const isPasswordValid = await bcrypt.compare(old_password, user.password);
       if (!isPasswordValid) {
         this.logger.warn(
-          `Patch password failure: Incorrect old password by id: ${id}`,
+          `Failed to update password: Incorrect old password by id: ${id}`,
         );
         throw new BadRequestException('Incorrect old password');
       }
@@ -412,9 +408,6 @@ export class AuthRestApiService {
       const hashedPassword = await bcrypt.hash(new_password, salt);
       await this.userRepository.update(id, { password: hashedPassword });
 
-      this.logger.log(
-        `Patch password success: Password updated for user id: ${id}`,
-      );
       return {
         message: 'Successfully updated password',
       };
@@ -424,7 +417,7 @@ export class AuthRestApiService {
       }
 
       this.logger.error(
-        `Patch password System Error: ${error.message}`,
+        `Failed to update password: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(

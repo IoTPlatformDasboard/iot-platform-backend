@@ -12,7 +12,7 @@ export class WidgetRealTimeDataService {
   }
 
   register(client: WebSocket) {
-    this.logger.debug('There is a new client connected');
+    this.logger.debug(`There is a new client connected: ${client.url}`);
 
     this.clients.set(client, new Set());
 
@@ -26,26 +26,26 @@ export class WidgetRealTimeDataService {
   }
 
   unregister(client: WebSocket) {
-    this.logger.debug('There is a client disconnected');
+    this.logger.debug(`There is a client disconnected: ${client.url}`);
     this.clients.delete(client);
   }
 
   subscribe(client: WebSocket, data: RealTimeDataMessageDto) {
-    this.logger.debug('There is a client subscribed');
+    this.logger.debug(`There is a client subscribed: ${client.url}`);
     const channel = this.buildChannel(data.topic, data.key);
 
     this.clients.get(client)?.add(channel);
   }
 
   unsubscribe(client: WebSocket, data: RealTimeDataMessageDto) {
-    this.logger.debug('There is a client unsubscribed');
+    this.logger.debug(`There is a client unsubscribed: ${client.url}`);
     const channel = this.buildChannel(data.topic, data.key);
 
     this.clients.get(client)?.delete(channel);
   }
 
   publish(topic: string, key: string, value: any) {
-    this.logger.debug('Publish message');
+    this.logger.debug(`There is a message published: ${topic}:${key}`);
     const channel = this.buildChannel(topic, key);
 
     for (const [client, channels] of this.clients) {

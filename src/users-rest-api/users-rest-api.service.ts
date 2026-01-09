@@ -34,7 +34,7 @@ export class UsersRestApiService {
       }
 
       this.logger.error(
-        `Get Role List System Error: ${error.message}`,
+        `Failed to get role list: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -52,7 +52,7 @@ export class UsersRestApiService {
       });
       if (isUsernameTaken) {
         this.logger.warn(
-          `Post User failure: ${postCreateUserBodyDto.username} already taken`,
+          `Failed to create user: ${postCreateUserBodyDto.username} already taken`,
         );
         throw new ConflictException('Username is already taken');
       }
@@ -87,10 +87,7 @@ export class UsersRestApiService {
         throw error;
       }
 
-      this.logger.error(
-        `Post User System Error: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to create user: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to create user, please try again later',
       );
@@ -131,7 +128,7 @@ export class UsersRestApiService {
       }
 
       this.logger.error(
-        `Get User List System Error: ${error.message}`,
+        `Failed to get user list: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -144,7 +141,9 @@ export class UsersRestApiService {
     try {
       // Check if the user not trying to change their own role
       if (id === userId) {
-        this.logger.warn(`Patch Role failure: Cannot change your own role`);
+        this.logger.warn(
+          `Failed to patch user role: Cannot change your own role`,
+        );
         throw new ConflictException('Cannot change your own role');
       }
 
@@ -154,7 +153,7 @@ export class UsersRestApiService {
         where: { id: userId },
       });
       if (!user) {
-        this.logger.warn(`Patch User Role failure: User not found`);
+        this.logger.warn(`Failed to patch user role: User not found`);
         throw new NotFoundException('User not found');
       }
 
@@ -175,7 +174,7 @@ export class UsersRestApiService {
       }
 
       this.logger.error(
-        `Patch Role System Error: ${error.message}`,
+        `Failed to patch user role: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -188,7 +187,7 @@ export class UsersRestApiService {
     try {
       // Check if the user not trying to delete themselves
       if (id === userId) {
-        this.logger.warn(`Delete User failure: Cannot delete yourself`);
+        this.logger.warn(`Failed to delete user: Cannot delete yourself`);
         throw new ConflictException('Cannot delete yourself');
       }
 
@@ -198,7 +197,7 @@ export class UsersRestApiService {
         where: { id: userId },
       });
       if (!user) {
-        this.logger.warn(`Delete User failure: User not found`);
+        this.logger.warn(`Failed to delete user: User not found`);
         throw new NotFoundException('User not found');
       }
 
@@ -213,10 +212,7 @@ export class UsersRestApiService {
         throw error;
       }
 
-      this.logger.error(
-        `Delete User System Error: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to delete user: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to delete user, please try again later',
       );

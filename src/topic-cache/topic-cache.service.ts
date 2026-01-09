@@ -32,8 +32,6 @@ export class TopicCacheService implements OnModuleInit {
         if (!t.is_active) return;
         this.topics.set(t.topic, t.id);
       });
-
-      this.logger.log(`Successfully loaded topics into cache`);
     } catch (error) {
       this.logger.error(
         'Failed to load topics into cache: ',
@@ -46,7 +44,6 @@ export class TopicCacheService implements OnModuleInit {
   add(topic: string, id: string): void {
     try {
       this.topics.set(topic, id);
-      this.logger.debug(`Successfully added topic to cache: ${topic}`);
     } catch (error) {
       this.logger.error(
         'Failed to add topic into cache: ',
@@ -59,7 +56,6 @@ export class TopicCacheService implements OnModuleInit {
   remove(topic: string): void {
     try {
       this.topics.delete(topic);
-      this.logger.debug(`Successfully removed topic from cache: ${topic}`);
     } catch (error) {
       this.logger.error(
         'Failed to remove topic from cache: ',

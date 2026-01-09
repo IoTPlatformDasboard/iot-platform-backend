@@ -32,7 +32,7 @@ export class WidgetsRestApiService {
       }
 
       this.logger.error(
-        `Get Type List System Error: ${error.message}`,
+        `Failed to get widget type list: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -63,7 +63,7 @@ export class WidgetsRestApiService {
       }
 
       this.logger.error(
-        `Post Widget System Error: ${error.message}`,
+        `Failed to create widget: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -85,10 +85,7 @@ export class WidgetsRestApiService {
         throw error;
       }
 
-      this.logger.error(
-        `Get Widget System Error: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to get widget: ${error.message}`, error.stack);
       throw new InternalServerErrorException(
         'Failed to get widget, please try again later',
       );
@@ -115,7 +112,7 @@ export class WidgetsRestApiService {
       }
 
       this.logger.error(
-        `Put Widget System Error: ${error.message}`,
+        `Failed to update widget: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -132,7 +129,7 @@ export class WidgetsRestApiService {
         where: { id: widgetId },
       });
       if (!widget) {
-        this.logger.warn(`Delete Widget failure: Widget not found`);
+        this.logger.warn(`Failed to delete widget: Widget not found`);
         throw new NotFoundException('Widget not found');
       }
 
@@ -148,7 +145,7 @@ export class WidgetsRestApiService {
       }
 
       this.logger.error(
-        `Delete Widget System Error: ${error.message}`,
+        `Failed to delete widget: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(

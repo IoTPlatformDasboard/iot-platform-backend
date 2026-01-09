@@ -35,7 +35,9 @@ export class TopicsRestApiService {
       if (existingTopic) {
         const duplicateField =
           existingTopic.name === body.name ? 'Name' : 'Topic';
-        this.logger.warn(`Post Topic failure: ${duplicateField} already taken`);
+        this.logger.warn(
+          `Failed to create topic: ${duplicateField} already taken`,
+        );
 
         throw new ConflictException(`${duplicateField} is already taken`);
       }
@@ -65,7 +67,7 @@ export class TopicsRestApiService {
       }
 
       this.logger.error(
-        `Post Topic System Error: ${error.message}`,
+        `Failed to create topic: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -114,7 +116,7 @@ export class TopicsRestApiService {
       }
 
       this.logger.error(
-        `Get Topic List System Error: ${error.message}`,
+        `Failed to get topic list: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
@@ -192,7 +194,7 @@ export class TopicsRestApiService {
         where: { id: topicId },
       });
       if (!topic) {
-        this.logger.warn(`Delete Topic failure: Topic not found`);
+        this.logger.warn(`Failed to delete topic: Topic not found`);
         throw new NotFoundException('Topic not found');
       }
 
@@ -211,7 +213,7 @@ export class TopicsRestApiService {
       }
 
       this.logger.error(
-        `Delete Topic System Error: ${error.message}`,
+        `Failed to delete topic: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
