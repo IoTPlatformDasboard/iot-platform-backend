@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiOkResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { UsersRestApiService } from './users-rest-api.service';
@@ -73,6 +74,16 @@ export class UsersRestApiController {
   }
 
   @ApiOperation({ summary: 'Get user list' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+  })
   @ApiOkResponse({
     schema: {
       example: {

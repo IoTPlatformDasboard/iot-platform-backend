@@ -101,7 +101,6 @@ export class AuthRestApiService {
         message: 'Successfully login',
         data: {
           access_token: accessToken,
-          refresh_token: refreshToken,
         },
       };
     } catch (error) {

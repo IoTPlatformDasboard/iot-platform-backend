@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiOkResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { TopicsRestApiService } from './topics-rest-api.service';
@@ -57,6 +58,16 @@ export class TopicsRestApiController {
   }
 
   @ApiOperation({ summary: 'Get topic list' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+  })
   @ApiOkResponse({
     schema: {
       example: {
@@ -130,7 +141,7 @@ export class TopicsRestApiController {
     schema: {
       example: {
         message: 'Successfully get topic lookup',
-        data: [],
+        data: ['topic1', 'topic2', 'topic3'],
       },
     },
   })
