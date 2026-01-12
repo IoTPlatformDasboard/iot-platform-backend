@@ -48,7 +48,7 @@ export class WidgetsRestApiService {
         id: uuidv4(),
         title: body.title,
         type: body.type,
-        data_source: body.data_source,
+        dataSource: body.dataSource,
         config: body.config,
       });
       await this.widgetRepository.save(newWidget);
@@ -98,7 +98,7 @@ export class WidgetsRestApiService {
       await this.widgetRepository.update(widgetId, {
         title: body.title,
         type: body.type,
-        data_source: body.data_source,
+        dataSource: body.dataSource,
         config: body.config,
       });
 

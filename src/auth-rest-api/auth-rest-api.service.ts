@@ -82,10 +82,10 @@ export class AuthRestApiService {
       const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
       await this.refreshTokenRepository.save({
         id: refreshTokenId,
-        user_id: user.id,
-        token_hash: hashedRefreshToken,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        device_info: req.headers['user-agent'] ?? 'unknown',
+        userId: user.id,
+        tokenHash: hashedRefreshToken,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        deviceInfo: req.headers['user-agent'] ?? 'unknown',
       });
 
       // Set refresh token in cookie
@@ -100,7 +100,7 @@ export class AuthRestApiService {
       return {
         message: 'Successfully login',
         data: {
-          access_token: accessToken,
+          accessToken,
         },
       };
     } catch (error) {
@@ -145,7 +145,7 @@ export class AuthRestApiService {
       const storedRefreshToken = await this.refreshTokenRepository.findOne({
         where: { id: refreshTokenPayload.jti },
       });
-      if (!storedRefreshToken || storedRefreshToken.revoked_at) {
+      if (!storedRefreshToken || storedRefreshToken.revokedAt) {
         this.logger.warn(`Failed to refresh token: Refresh token revoked`);
         throw new UnauthorizedException('Refresh token revoked');
       }
@@ -153,7 +153,7 @@ export class AuthRestApiService {
       // Check if the refresh token matches the stored hash
       const isRefeshTokenValid = await bcrypt.compare(
         refreshToken,
-        storedRefreshToken.token_hash,
+        storedRefreshToken.tokenHash,
       );
       if (!isRefeshTokenValid) {
         this.logger.warn(
@@ -163,7 +163,7 @@ export class AuthRestApiService {
       }
 
       // Revoke the old refresh token
-      storedRefreshToken.revoked_at = new Date();
+      storedRefreshToken.revokedAt = new Date();
       await this.refreshTokenRepository.save(storedRefreshToken);
 
       // Generate new JWT access token and refresh token
@@ -197,10 +197,10 @@ export class AuthRestApiService {
       const hashedNewRefreshToken = await bcrypt.hash(newRefreshToken, salt);
       await this.refreshTokenRepository.save({
         id: newRefreshTokenId,
-        user_id: refreshTokenPayload.sub,
-        token_hash: hashedNewRefreshToken,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        device_info: req.headers['user-agent'] ?? 'unknown',
+        userId: refreshTokenPayload.sub,
+        tokenHash: hashedNewRefreshToken,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        deviceInfo: req.headers['user-agent'] ?? 'unknown',
       });
 
       // Set new refresh token in cookie
@@ -215,7 +215,7 @@ export class AuthRestApiService {
       return {
         message: 'Successfully refreshed token',
         data: {
-          access_token: newAccessToken,
+          accessToken: newAccessToken,
         },
       };
     } catch (error) {
@@ -258,8 +258,8 @@ export class AuthRestApiService {
       const storedToken = await this.refreshTokenRepository.findOne({
         where: { id: payload.jti },
       });
-      if (storedToken && !storedToken.revoked_at) {
-        storedToken.revoked_at = new Date();
+      if (storedToken && !storedToken.revokedAt) {
+        storedToken.revokedAt = new Date();
         await this.refreshTokenRepository.save(storedToken);
       }
 
@@ -391,10 +391,10 @@ export class AuthRestApiService {
         throw new UnauthorizedException('User not found');
       }
 
-      const { old_password, new_password } = body;
+      const { oldPassword, newPassword } = body;
 
       // Check if the old password is valid
-      const isPasswordValid = await bcrypt.compare(old_password, user.password);
+      const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
       if (!isPasswordValid) {
         this.logger.warn(
           `Failed to update password: Incorrect old password by id: ${id}`,
@@ -404,7 +404,7 @@ export class AuthRestApiService {
 
       // Update the password
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(new_password, salt);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
       await this.userRepository.update(id, { password: hashedPassword });
 
       return {

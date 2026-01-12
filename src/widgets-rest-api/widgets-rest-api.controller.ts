@@ -58,7 +58,7 @@ export class WidgetsRestApiController {
           id: 'xxxx-xxxx-xxxx-xxxx',
           title: 'widget_title',
           type: 'BOARD',
-          data_source: {
+          dataSource: {
             topic: 'topic',
             key: 'key',
           },
@@ -112,7 +112,7 @@ export class WidgetsRestApiController {
           id: 'xxxx-xxxx-xxxx-xxxx',
           title: 'updated_widget_title',
           type: 'board',
-          data_source: {
+          dataSource: {
             topic: 'topic',
             key: 'key',
           },

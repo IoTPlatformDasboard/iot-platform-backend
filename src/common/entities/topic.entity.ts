@@ -21,11 +21,20 @@ export class Topic {
   @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   topic: string;
 
-  @Column({ type: 'boolean', default: false, nullable: false })
-  is_active: boolean;
+  @Column({
+    name: 'is_active',
+    type: 'boolean',
+    default: false,
+    nullable: false,
+  })
+  isActive: boolean;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
   @OneToMany(() => Telemetry, (Telemetry) => Telemetry.topic)
   telemetry: Telemetry[];

@@ -13,25 +13,39 @@ export class RefreshToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  user_id: string;
+  @Column({ name: 'user_id', type: 'varchar', nullable: false })
+  userId: string;
 
-  @Column({ type: 'varchar', unique: true, nullable: false })
-  token_hash: string;
+  @Column({
+    name: 'token_hash',
+    type: 'varchar',
+    unique: true,
+    nullable: false,
+  })
+  tokenHash: string;
 
-  @Column({ type: 'timestamp', nullable: false })
-  expires_at: Date;
+  @Column({ name: 'expires_at', type: 'timestamp', nullable: false })
+  expiresAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
-  revoked_at: Date | null;
+  @Column({ name: 'revoked_at', type: 'timestamp', nullable: true })
+  revokedAt: Date | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  device_info: string;
+  @Column({
+    name: 'device_info',
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+  })
+  deviceInfo: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
-  @ManyToOne(() => User, (User) => User.refresh_tokens)
+  @ManyToOne(() => User, (User) => User.refreshTokens)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

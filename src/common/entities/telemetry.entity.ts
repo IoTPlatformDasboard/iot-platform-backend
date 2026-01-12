@@ -13,14 +13,18 @@ export class Telemetry {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  topic_id: string;
+  @Column({ name: 'topic_id', type: 'varchar', nullable: false })
+  topicId: string;
 
   @Column({ type: 'jsonb', nullable: false })
   payload: Record<string, any> | null;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
   @ManyToOne(() => Topic, (Topic) => Topic.telemetry)
   @JoinColumn({ name: 'topic_id' })

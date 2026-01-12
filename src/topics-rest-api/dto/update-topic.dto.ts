@@ -6,7 +6,7 @@ export class UpdateTopicDto extends PickType(CreateTopicBodyDto, [
   'name',
   'description',
   'topic',
-  'is_active',
+  'isActive',
 ] as const) {
   @ApiProperty({ example: 'topic_name', description: 'Topic name' })
   name: string;
@@ -21,5 +21,5 @@ export class UpdateTopicDto extends PickType(CreateTopicBodyDto, [
   topic: string;
 
   @ApiProperty({ example: 'true', description: 'Is active' })
-  is_active: boolean;
+  isActive: boolean;
 }

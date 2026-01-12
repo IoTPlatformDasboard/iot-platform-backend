@@ -70,7 +70,7 @@ export class MqttService {
     const id = uuidv4();
     const newTelemetry = this.telemetryRepository.create({
       id,
-      topic_id: topicId,
+      topicId,
       payload,
     });
     await this.telemetryRepository.save(newTelemetry);

@@ -47,7 +47,7 @@ export class CreateWidgetBodyDto {
   @IsNotEmpty({ message: 'Widget data source cannot be empty' })
   @ValidateNested()
   @Type(() => WidgetDataSourceDto)
-  data_source: WidgetDataSourceDto;
+  dataSource: WidgetDataSourceDto;
 
   @ApiProperty({
     example: {

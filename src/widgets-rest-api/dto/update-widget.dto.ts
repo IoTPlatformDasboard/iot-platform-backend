@@ -6,7 +6,7 @@ import { CreateWidgetBodyDto, WidgetDataSourceDto } from './create-widget.dto';
 export class UpdateWidgetBodyDto extends PickType(CreateWidgetBodyDto, [
   'title',
   'type',
-  'data_source',
+  'dataSource',
   'config',
 ] as const) {
   @ApiProperty({ example: 'widget_title', description: 'Widget title' })
@@ -22,7 +22,7 @@ export class UpdateWidgetBodyDto extends PickType(CreateWidgetBodyDto, [
     },
     description: 'Widget data source',
   })
-  data_source: WidgetDataSourceDto;
+  dataSource: WidgetDataSourceDto;
 
   @ApiProperty({
     example: {

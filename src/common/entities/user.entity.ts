@@ -27,9 +27,13 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.VIEWER })
   role: UserRole;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
-  @OneToMany(() => RefreshToken, (refresh_token) => refresh_token.user)
-  refresh_tokens: RefreshToken[];
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshToken[];
 }

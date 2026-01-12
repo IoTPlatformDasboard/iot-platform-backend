@@ -48,18 +48,26 @@ export class TopicsRestApiService {
         name: body.name,
         description: body.description,
         topic: body.topic,
-        is_active: body.is_active,
+        isActive: body.isActive,
       });
       await this.topicRepository.save(newTopic);
 
       // Add topic to cache
-      if (body.is_active) {
+      if (body.isActive) {
         this.topicCacheService.add(newTopic.topic, newTopic.id);
       }
 
+      const data = {
+        id: newTopic.id,
+        name: newTopic.name,
+        description: newTopic.description,
+        topic: newTopic.topic,
+        isActive: newTopic.isActive,
+      };
+
       return {
         message: 'Successfully create topic',
-        data: newTopic,
+        data,
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -90,7 +98,7 @@ export class TopicsRestApiService {
           name: true,
           description: true,
           topic: true,
-          is_active: true,
+          isActive: true,
         },
         take: limit,
         skip: skip,
@@ -158,12 +166,12 @@ export class TopicsRestApiService {
         name: body.name,
         description: body.description,
         topic: body.topic,
-        is_active: body.is_active,
+        isActive: body.isActive,
       });
 
       // Update topic in cache
       this.topicCacheService.remove(body.topic);
-      if (body.is_active) {
+      if (body.isActive) {
         this.topicCacheService.add(body.topic, topicId);
       }
 

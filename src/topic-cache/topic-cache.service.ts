@@ -23,13 +23,13 @@ export class TopicCacheService implements OnModuleInit {
   async load(): Promise<void> {
     try {
       const topics = await this.topicRepository.find({
-        select: { id: true, topic: true, is_active: true },
+        select: { id: true, topic: true, isActive: true },
       });
 
       this.topics.clear();
 
       topics.forEach((t) => {
-        if (!t.is_active) return;
+        if (!t.isActive) return;
         this.topics.set(t.topic, t.id);
       });
     } catch (error) {

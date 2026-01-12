@@ -27,12 +27,16 @@ export class Widget {
   @Column({ type: 'enum', enum: WidgetType, default: WidgetType.BOARD })
   type: string;
 
-  @Column({ type: 'jsonb', nullable: true })
-  data_source: WidgetDataSource | null;
+  @Column({ name: 'data_source', type: 'jsonb', nullable: true })
+  dataSource: WidgetDataSource | null;
 
   @Column({ type: 'jsonb', nullable: true })
   config: Record<string, any> | null;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 }
