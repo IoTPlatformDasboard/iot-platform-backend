@@ -233,12 +233,12 @@ export class TopicsRestApiService {
   async getLookup() {
     try {
       const topics = await this.topicRepository.find({
-        select: { topic: true },
+        select: { id: true, topic: true },
         order: { topic: 'ASC' },
       });
       return {
         message: 'Successfully get topic lookup',
-        data: topics.map((item) => item.topic),
+        data: topics,
       };
     } catch (error) {
       if (error instanceof HttpException) {

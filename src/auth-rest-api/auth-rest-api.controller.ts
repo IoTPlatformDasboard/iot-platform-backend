@@ -97,9 +97,11 @@ export class AuthRestApiController {
     schema: {
       example: {
         message: 'Successfully get profile',
-        user: {
-          username: 'user.username',
-          role: 'user.role',
+        data: {
+          user: {
+            username: 'user.username',
+            role: 'user.role',
+          },
         },
       },
     },

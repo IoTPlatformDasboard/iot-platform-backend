@@ -1,7 +1,7 @@
 {
-  "name": "iot-backend-platform",
+  "name": "iot-platform-backend",
   "version": "0.0.1",
-  "description": "IoT Backend Platform",
+  "description": "Backend IoT Platform",
   "author": "Bill Valentinov",
   "private": true,
   "license": "UNLICENSED",
