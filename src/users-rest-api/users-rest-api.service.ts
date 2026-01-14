@@ -142,7 +142,7 @@ export class UsersRestApiService {
       // Check if the user not trying to change their own role
       if (id === userId) {
         this.logger.warn(
-          `Failed to patch user role: Cannot change your own role`,
+          `Failed to update user role: Cannot change your own role`,
         );
         throw new ConflictException('Cannot change your own role');
       }
@@ -153,7 +153,7 @@ export class UsersRestApiService {
         where: { id: userId },
       });
       if (!user) {
-        this.logger.warn(`Failed to patch user role: User not found`);
+        this.logger.warn(`Failed to update user role: User not found`);
         throw new NotFoundException('User not found');
       }
 
@@ -174,11 +174,11 @@ export class UsersRestApiService {
       }
 
       this.logger.error(
-        `Failed to patch user role: ${error.message}`,
+        `Failed to update user role: ${error.message}`,
         error.stack,
       );
       throw new InternalServerErrorException(
-        'Failed to patch role, please try again later',
+        'Failed to update user role, please try again later',
       );
     }
   }

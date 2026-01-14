@@ -14,6 +14,7 @@ import { WidgetsRestApiModule } from './widgets-rest-api/widgets-rest-api.module
 import { MqttModule } from './mqtt/mqtt.module';
 import { TopicCacheModule } from './topic-cache/topic-cache.module';
 import { WidgetRealTimeDataModule } from './widget-real-time-data/widget-real-time-data.module';
+import { HistoricalDataRestApiModule } from './historical-data-rest-api/historical-data-rest-api.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { WidgetRealTimeDataModule } from './widget-real-time-data/widget-real-ti
     MqttModule,
     TopicCacheModule,
     WidgetRealTimeDataModule,
+    HistoricalDataRestApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

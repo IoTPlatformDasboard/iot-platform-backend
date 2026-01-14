@@ -141,7 +141,12 @@ export class TopicsRestApiController {
     schema: {
       example: {
         message: 'Successfully get topic lookup',
-        data: ['topic1', 'topic2', 'topic3'],
+        data: [
+          {
+            id: '25997702-c6e7-4111-b089-e805dea790f1',
+            topic: 'auth-code/60de5684-505a-479f-a894-187a9500a3c4',
+          },
+        ],
       },
     },
   })

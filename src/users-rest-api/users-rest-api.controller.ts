@@ -112,7 +112,7 @@ export class UsersRestApiController {
     return this.usersRestApiService.getList(query);
   }
 
-  @ApiOperation({ summary: 'Change user role' })
+  @ApiOperation({ summary: 'Update user role' })
   @ApiOkResponse({
     schema: {
       example: {
