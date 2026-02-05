@@ -8,7 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { Widget, WidgetType } from '../common/entities/widget.entity';
+import { Widget } from '../common/entities/widget.entity';
 import { CreateWidgetBodyDto } from './dto/create-widget.dto';
 import { UpdateWidgetBodyDto } from './dto/update-widget.dto';
 
@@ -20,35 +20,12 @@ export class WidgetsRestApiService {
     private readonly widgetRepository: Repository<Widget>,
   ) {}
 
-  async getTypeList() {
-    try {
-      return {
-        message: 'Successfully get widget type list',
-        data: Object.values(WidgetType),
-      };
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      this.logger.error(
-        `Failed to get widget type list: ${error.message}`,
-        error.stack,
-      );
-      throw new InternalServerErrorException(
-        'Failed to get widget type list, please try again later',
-      );
-    }
-  }
-
   async post(body: CreateWidgetBodyDto) {
     try {
       // Create a new widget
       const newWidget = this.widgetRepository.create({
         id: uuidv4(),
-        title: body.title,
-        type: body.type,
-        dataSource: body.dataSource,
+        dataSource: body.data_source,
         config: body.config,
       });
       await this.widgetRepository.save(newWidget);
@@ -96,9 +73,7 @@ export class WidgetsRestApiService {
     try {
       // Update the widget
       await this.widgetRepository.update(widgetId, {
-        title: body.title,
-        type: body.type,
-        dataSource: body.dataSource,
+        dataSource: body.data_source,
         config: body.config,
       });
 

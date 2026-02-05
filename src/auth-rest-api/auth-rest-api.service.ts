@@ -171,9 +171,16 @@ export class AuthRestApiService {
         select: { role: true },
         where: { id: refreshTokenPayload.sub },
       });
+      if (!userRole) {
+        this.logger.warn(
+          `Failed to refresh token: User not found by id: ${refreshTokenPayload.sub}`,
+        );
+        throw new UnauthorizedException('User not found');
+      }
+
       const newAccessTokenPayload = {
         sub: refreshTokenPayload.sub,
-        role: userRole,
+        role: userRole.role,
         type: 'access',
       };
       const newAccessToken = this.jwtService.sign(newAccessTokenPayload, {

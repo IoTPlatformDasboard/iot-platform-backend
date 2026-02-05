@@ -32,23 +32,6 @@ import { AccessTokenPayload } from '../common/interfaces/access-token-payload.in
 export class WidgetsRestApiController {
   constructor(private readonly widgetsRestApiService: WidgetsRestApiService) {}
 
-  @ApiOperation({ summary: 'Get widget type list' })
-  @ApiOkResponse({
-    schema: {
-      example: {
-        message: 'Successfully get widget type list',
-        data: ['BOARD', 'CHART', 'GAUGE'],
-      },
-    },
-  })
-  @Version('1')
-  @UseGuards(UserRolesGuard)
-  @UserRoles(UserRole.OPERATOR)
-  @Get('type-list')
-  async getTypeList() {
-    return this.widgetsRestApiService.getTypeList();
-  }
-
   @ApiOperation({ summary: 'Create widget' })
   @ApiOkResponse({
     schema: {
@@ -56,13 +39,16 @@ export class WidgetsRestApiController {
         message: 'Successfully create widget',
         data: {
           id: 'xxxx-xxxx-xxxx-xxxx',
-          title: 'widget_title',
-          type: 'BOARD',
           dataSource: {
             topic: 'topic',
             key: 'key',
           },
-          config: {},
+          config: {
+            type: 'value',
+            title: 'Kelembaban',
+            value: 65,
+            unit: '%',
+          },
         },
       },
     },
@@ -83,13 +69,16 @@ export class WidgetsRestApiController {
         data: [
           {
             id: 'xxxx-xxxx-xxxx-xxxx',
-            title: 'widget_title',
-            type: 'board',
             data_source: {
               topic: 'topic',
               key: 'key',
             },
-            config: {},
+            config: {
+              type: 'value',
+              title: 'Kelembaban',
+              value: 65,
+              unit: '%',
+            },
           },
         ],
       },
@@ -110,13 +99,16 @@ export class WidgetsRestApiController {
         message: 'Successfully update widget',
         data: {
           id: 'xxxx-xxxx-xxxx-xxxx',
-          title: 'updated_widget_title',
-          type: 'board',
-          dataSource: {
+          data_source: {
             topic: 'topic',
             key: 'key',
           },
-          config: {},
+          config: {
+            type: 'value',
+            title: 'Kelembaban',
+            value: 65,
+            unit: '%',
+          },
         },
       },
     },

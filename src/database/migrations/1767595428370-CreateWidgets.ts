@@ -13,19 +13,6 @@ export class CreateWidgets1767595428370 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'title',
-            type: 'varchar',
-            length: '100',
-            isNullable: true,
-          },
-          {
-            name: 'type',
-            type: 'enum',
-            enum: ['LINE_CHART', 'GAUGE', 'BOARD'],
-            default: `'BOARD'`,
-            isNullable: false,
-          },
-          {
             name: 'data_source',
             type: 'jsonb',
             isNullable: true,
@@ -51,6 +38,5 @@ export class CreateWidgets1767595428370 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('widgets');
-    await queryRunner.query('DROP TYPE IF EXISTS widgets_type_enum');
   }
 }

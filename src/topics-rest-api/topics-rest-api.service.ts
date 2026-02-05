@@ -233,7 +233,7 @@ export class TopicsRestApiService {
   async getLookup() {
     try {
       const topics = await this.topicRepository.find({
-        select: { id: true, topic: true },
+        select: { id: true, name: true, topic: true },
         order: { topic: 'ASC' },
       });
       return {

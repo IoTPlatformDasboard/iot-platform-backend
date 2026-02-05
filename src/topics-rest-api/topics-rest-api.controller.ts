@@ -152,7 +152,7 @@ export class TopicsRestApiController {
   })
   @Version('1')
   @UseGuards(UserRolesGuard)
-  @UserRoles(UserRole.OPERATOR)
+  @UserRoles(UserRole.VIEWER)
   @Get('lookup')
   async getLookup() {
     return this.topicsRestApiService.getLookup();

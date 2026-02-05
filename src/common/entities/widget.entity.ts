@@ -5,12 +5,6 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-export enum WidgetType {
-  BOARD = 'BOARD',
-  LINE_CHART = 'LINE_CHART',
-  GAUGE = 'GAUGE',
-}
-
 export interface WidgetDataSource {
   topic: string;
   key: string;
@@ -20,12 +14,6 @@ export interface WidgetDataSource {
 export class Widget {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  title: string | null;
-
-  @Column({ type: 'enum', enum: WidgetType, default: WidgetType.BOARD })
-  type: string;
 
   @Column({ name: 'data_source', type: 'jsonb', nullable: true })
   dataSource: WidgetDataSource | null;
