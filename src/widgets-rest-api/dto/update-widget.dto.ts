@@ -1,6 +1,10 @@
 import { PickType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateWidgetBodyDto, WidgetDataSourceDto } from './create-widget.dto';
+import {
+  CreateWidgetBodyDto,
+  WidgetDataSourceDto,
+  WidgetConfigDto,
+} from './create-widget.dto';
 
 export class UpdateWidgetBodyDto extends PickType(CreateWidgetBodyDto, [
   'data_source',
@@ -22,5 +26,5 @@ export class UpdateWidgetBodyDto extends PickType(CreateWidgetBodyDto, [
     },
     description: 'Widget config',
   })
-  config: Record<string, any>;
+  config: WidgetConfigDto;
 }

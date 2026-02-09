@@ -37,5 +37,5 @@ export class CreateTopicBodyDto {
   @ApiProperty({ example: 'true', description: 'Is active' })
   @IsNotEmpty({ message: 'Is active cannot be empty' })
   @IsBoolean({ message: 'Is active must be a boolean' })
-  isActive: boolean;
+  is_active: boolean;
 }

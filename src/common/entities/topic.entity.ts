@@ -38,4 +38,15 @@ export class Topic {
 
   @OneToMany(() => Telemetry, (Telemetry) => Telemetry.topic)
   telemetry: Telemetry[];
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      topic: this.topic,
+      is_active: this.isActive,
+      created_at: this.createdAt,
+    };
+  }
 }

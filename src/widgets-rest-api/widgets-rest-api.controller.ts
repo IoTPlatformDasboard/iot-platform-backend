@@ -39,14 +39,16 @@ export class WidgetsRestApiController {
         message: 'Successfully create widget',
         data: {
           id: 'xxxx-xxxx-xxxx-xxxx',
-          dataSource: {
+          data_source: {
             topic: 'topic',
             key: 'key',
           },
           config: {
             type: 'value',
-            title: 'Kelembaban',
-            value: 65,
+            order: 1,
+            title: 'CPU Usage',
+            max: 100,
+            min: 0,
             unit: '%',
           },
         },
@@ -75,8 +77,10 @@ export class WidgetsRestApiController {
             },
             config: {
               type: 'value',
-              title: 'Kelembaban',
-              value: 65,
+              order: 1,
+              title: 'CPU Usage',
+              max: 100,
+              min: 0,
               unit: '%',
             },
           },
@@ -105,8 +109,10 @@ export class WidgetsRestApiController {
           },
           config: {
             type: 'value',
-            title: 'Kelembaban',
-            value: 65,
+            order: 1,
+            title: 'CPU Usage',
+            max: 100,
+            min: 0,
             unit: '%',
           },
         },

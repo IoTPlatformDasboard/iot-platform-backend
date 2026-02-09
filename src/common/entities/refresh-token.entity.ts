@@ -48,4 +48,16 @@ export class RefreshToken {
   @ManyToOne(() => User, (User) => User.refreshTokens)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  toJSON() {
+    return {
+      id: this.id,
+      user_id: this.userId,
+      token_hash: this.tokenHash,
+      expires_at: this.expiresAt,
+      revoked_at: this.revokedAt,
+      device_info: this.deviceInfo,
+      created_at: this.createdAt,
+    };
+  }
 }

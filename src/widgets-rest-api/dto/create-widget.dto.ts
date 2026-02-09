@@ -2,20 +2,47 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsString,
-  IsOptional,
   ValidateNested,
-  IsObject,
+  IsNumber,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class WidgetDataSourceDto {
-  @IsOptional()
   @IsString()
   topic: string;
 
-  @IsOptional()
   @IsString()
   key: string;
+}
+
+export enum WidgetType {
+  VALUE = 'value',
+  CHART = 'chart',
+  GAUGE = 'gauge',
+}
+
+export class WidgetConfigDto {
+  @IsString()
+  @IsEnum(WidgetType, {
+    message: 'Type must be one of gauge, chart or value',
+  })
+  type: 'gauge' | 'chart' | 'value';
+
+  @IsNumber()
+  order: number;
+
+  @IsString()
+  title: string;
+
+  @IsNumber()
+  max: number;
+
+  @IsNumber()
+  min: number;
+
+  @IsString()
+  unit: string;
 }
 
 export class CreateWidgetBodyDto {
@@ -26,7 +53,7 @@ export class CreateWidgetBodyDto {
     },
     description: 'Widget data source',
   })
-  @IsNotEmpty({ message: 'Widget data source cannot be empty' })
+  @IsNotEmpty({ message: 'Data source cannot be empty' })
   @ValidateNested()
   @Type(() => WidgetDataSourceDto)
   data_source: WidgetDataSourceDto;
@@ -34,13 +61,16 @@ export class CreateWidgetBodyDto {
   @ApiProperty({
     example: {
       type: 'value',
-      title: 'Kelembaban',
-      value: 65,
+      order: 1,
+      title: 'CPU Usage',
+      max: 100,
+      min: 0,
       unit: '%',
     },
     description: 'Widget config',
   })
-  @IsNotEmpty({ message: 'Widget config cannot be empty' })
-  @IsObject()
-  config: Record<string, any>;
+  @IsNotEmpty({ message: 'Config cannot be empty' })
+  @ValidateNested()
+  @Type(() => WidgetConfigDto)
+  config: WidgetConfigDto;
 }

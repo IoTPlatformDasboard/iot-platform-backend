@@ -100,7 +100,7 @@ export class AuthRestApiService {
       return {
         message: 'Successfully login',
         data: {
-          accessToken,
+          access_token: accessToken,
         },
       };
     } catch (error) {
@@ -222,7 +222,7 @@ export class AuthRestApiService {
       return {
         message: 'Successfully refreshed token',
         data: {
-          accessToken: newAccessToken,
+          access_token: newAccessToken,
         },
       };
     } catch (error) {

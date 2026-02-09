@@ -71,6 +71,16 @@ export class WidgetsRestApiService {
 
   async put(widgetId: string, body: UpdateWidgetBodyDto) {
     try {
+      // Check if the widget exists
+      const widget = await this.widgetRepository.findOne({
+        select: { id: true },
+        where: { id: widgetId },
+      });
+      if (!widget) {
+        this.logger.warn(`Failed to delete widget: Widget not found`);
+        throw new NotFoundException('Widget not found');
+      }
+
       // Update the widget
       await this.widgetRepository.update(widgetId, {
         dataSource: body.data_source,

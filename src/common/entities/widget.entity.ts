@@ -10,16 +10,25 @@ export interface WidgetDataSource {
   key: string;
 }
 
+export interface WidgetConfig {
+  title: string;
+  type: 'gauge' | 'chart' | 'value';
+  order: number;
+  max: number;
+  min: number;
+  unit: string;
+}
+
 @Entity({ name: 'widgets' })
 export class Widget {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ name: 'data_source', type: 'jsonb', nullable: true })
-  dataSource: WidgetDataSource | null;
+  dataSource: WidgetDataSource;
 
   @Column({ type: 'jsonb', nullable: true })
-  config: Record<string, any> | null;
+  config: WidgetConfig;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -27,4 +36,13 @@ export class Widget {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
+
+  toJSON() {
+    return {
+      id: this.id,
+      data_source: this.dataSource,
+      config: this.config,
+      created_at: this.createdAt,
+    };
+  }
 }

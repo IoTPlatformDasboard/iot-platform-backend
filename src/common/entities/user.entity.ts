@@ -36,4 +36,13 @@ export class User {
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshToken[];
+
+  toJSON() {
+    return {
+      id: this.id,
+      username: this.username,
+      role: this.role,
+      created_at: this.createdAt,
+    };
+  }
 }

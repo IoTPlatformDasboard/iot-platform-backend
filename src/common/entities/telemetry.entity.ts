@@ -29,4 +29,13 @@ export class Telemetry {
   @ManyToOne(() => Topic, (Topic) => Topic.telemetry)
   @JoinColumn({ name: 'topic_id' })
   topic: Topic;
+
+  toJSON() {
+    return {
+      id: this.id,
+      topic_id: this.topicId,
+      payload: this.payload,
+      created_at: this.createdAt,
+    };
+  }
 }

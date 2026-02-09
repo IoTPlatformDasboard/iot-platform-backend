@@ -39,7 +39,7 @@ export class AuthRestApiController {
       example: {
         message: 'Successfully login',
         data: {
-          accessToken: 'xxxxxx',
+          access_token: 'xxxxxx',
         },
       },
     },
@@ -60,7 +60,7 @@ export class AuthRestApiController {
       example: {
         message: 'Successfully refreshed token',
         data: {
-          accessToken: 'xxxxxx',
+          access_token: 'xxxxxx',
         },
       },
     },

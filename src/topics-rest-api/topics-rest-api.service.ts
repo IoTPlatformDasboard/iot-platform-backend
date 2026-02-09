@@ -48,12 +48,12 @@ export class TopicsRestApiService {
         name: body.name,
         description: body.description,
         topic: body.topic,
-        isActive: body.isActive,
+        isActive: body.is_active,
       });
       await this.topicRepository.save(newTopic);
 
       // Add topic to cache
-      if (body.isActive) {
+      if (body.is_active) {
         this.topicCacheService.add(newTopic.topic, newTopic.id);
       }
 
@@ -62,7 +62,7 @@ export class TopicsRestApiService {
         name: newTopic.name,
         description: newTopic.description,
         topic: newTopic.topic,
-        isActive: newTopic.isActive,
+        is_active: newTopic.isActive,
       };
 
       return {
@@ -148,17 +148,25 @@ export class TopicsRestApiService {
       }
 
       // Check if the topic name or topic is already taken
-      const duplicateTopic = await this.topicRepository.findOne({
-        select: { id: true, name: true, topic: true },
-        where: [{ name: body.name }, { topic: body.topic }],
+      const duplicateName = await this.topicRepository.findOne({
+        select: { id: true },
+        where: {
+          name: body.name,
+        },
       });
+      const duplicateTopic = await this.topicRepository.findOne({
+        select: { id: true },
+        where: {
+          topic: body.topic,
+        },
+      });
+      if (duplicateName && duplicateName.id !== topicId) {
+        this.logger.warn('Failed to update topic: Name already taken');
+        throw new ConflictException('Name is already taken');
+      }
       if (duplicateTopic && duplicateTopic.id !== topicId) {
-        const duplicateField =
-          duplicateTopic.name === body.name ? 'Name' : 'Topic';
-        this.logger.warn(
-          `Failed to update topic: ${duplicateField} already taken`,
-        );
-        throw new ConflictException(`${duplicateField} is already taken`);
+        this.logger.warn('Failed to update topic: Topic already taken');
+        throw new ConflictException('Topic is already taken');
       }
 
       // Update the topic
@@ -166,12 +174,12 @@ export class TopicsRestApiService {
         name: body.name,
         description: body.description,
         topic: body.topic,
-        isActive: body.isActive,
+        isActive: body.is_active,
       });
 
       // Update topic in cache
       this.topicCacheService.remove(body.topic);
-      if (body.isActive) {
+      if (body.is_active) {
         this.topicCacheService.add(body.topic, topicId);
       }
 
