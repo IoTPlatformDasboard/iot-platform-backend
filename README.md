@@ -78,3 +78,37 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+### 📡 Widget Real-Time Data – WebSocket API
+
+Endpoint:
+
+```bash
+ws://localhost:3000/ws/widget-real-time-data
+```
+
+Message format:
+
+```bash
+{
+  "event": "<event_name>", // "subscribe" | "unsubscribe"
+  "data": {
+    "topic": "<string>",
+    "key": "<string>"
+  }
+}
+```
+
+Data received format:
+
+```bash
+{
+  "event": "data",
+  "data": {
+    "topic": "auth-code/60de5684-505a-479f-a894-187a9500a3c4",
+    "key": "V2",
+    "value": 28,
+    "timestamp": "2026-02-09T06:45:12.321Z"
+  }
+}
+```

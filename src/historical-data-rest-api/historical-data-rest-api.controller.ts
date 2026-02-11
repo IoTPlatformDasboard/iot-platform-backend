@@ -59,7 +59,7 @@ export class HistoricalDataRestApiController {
               V3: 5.3,
               V4: 0.501,
             },
-            createdAt: '2026-01-14T04:06:15.856Z',
+            created_at: '2026-01-14T04:06:15.856Z',
           },
         ],
       },

@@ -22,6 +22,8 @@ async function bootstrap() {
       url: process.env.MQTT_BROKER_URL,
       username: process.env.MQTT_BROKER_USERNAME,
       password: process.env.MQTT_BROKER_PASSWORD,
+      subscribeOptions: { qos: 1 },
+      rejectUnauthorized: false,
     },
   });
 

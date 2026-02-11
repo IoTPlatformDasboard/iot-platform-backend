@@ -144,6 +144,7 @@ export class TopicsRestApiController {
         data: [
           {
             id: '25997702-c6e7-4111-b089-e805dea790f1',
+            name: 'auth-code',
             topic: 'auth-code/60de5684-505a-479f-a894-187a9500a3c4',
           },
         ],

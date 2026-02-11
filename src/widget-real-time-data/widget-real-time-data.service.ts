@@ -44,7 +44,12 @@ export class WidgetRealTimeDataService {
     this.clients.get(client)?.delete(channel);
   }
 
-  publish(topic: string, key: string, value: any) {
+  publish(
+    topic: string,
+    key: string,
+    value: any,
+    timestamp: number = Date.now(),
+  ) {
     this.logger.debug(`There is a message published: ${topic}:${key}`);
     const channel = this.buildChannel(topic, key);
 
@@ -63,6 +68,7 @@ export class WidgetRealTimeDataService {
             topic,
             key,
             value,
+            timestamp,
           },
         }),
       );
